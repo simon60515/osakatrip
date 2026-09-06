@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>大阪・京都 五天四夜行程</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@500;700;800&family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#F7F3EC;
+    --paper-deep:#EFE9DD;
+    --ink:#2A2620;
+    --ink-soft:#6B6459;
+    --line:#DDD5C4;
+    --card:#FFFFFF;
+
+    --d1:#2F6F6F; --d1-soft:#E3EFEE;
+    --d2:#6B4C7A; --d2-soft:#EEE6F1;
+    --d3:#B7410E; --d3-soft:#F6E4DA;
+    --d4:#2C3E70; --d4-soft:#E2E6F0;
+    --d5:#A9790C; --d5-soft:#F3E9D2;
+  }
+
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--paper);
+    color:var(--ink);
+    font-family:'Noto Sans TC', sans-serif;
+    line-height:1.7;
+    -webkit-font-smoothing:antialiased;
+  }
+
+  .wrap{max-width:880px;margin:0 auto;padding:0 20px 80px;}
+
+  /* ---------- Header ---------- */
+  header{
+    padding:64px 20px 40px;
+    text-align:center;
+    position:relative;
+    overflow:hidden;
+  }
+  header .stamp-row{
+    display:flex;justify-content:center;gap:10px;margin-bottom:22px;
+  }
+  header .stamp-row span{
+    width:7px;height:7px;border-radius:50%;background:var(--ink-soft);opacity:.35;
+  }
+  h1{
+    font-family:'Shippori Mincho', serif;
+    font-weight:800;
+    font-size:clamp(30px,5vw,46px);
+    margin:0 0 10px;
+    letter-spacing:.04em;
+  }
+  h1 .accent{color:var(--d3);}
+  header p.sub{
+    margin:0;
+    color:var(--ink-soft);
+    font-size:15px;
+    letter-spacing:.08em;
+  }
+  header .rule{
+    width:64px;height:2px;background:var(--ink);
+    margin:26px auto 0;opacity:.7;
+  }
+
+  /* ---------- Day tabs ---------- */
+  .tabs{
+    position:sticky; top:0; z-index:20;
+    background:var(--paper);
+    display:flex; gap:6px;
+    padding:14px 0 12px;
+    overflow-x:auto;
+    border-bottom:1px solid var(--line);
+    margin-bottom:6px;
+  }
+  .tabs::-webkit-scrollbar{display:none;}
+  .tab{
+    flex:0 0 auto;
+    font-family:'Noto Sans TC',sans-serif;
+    font-size:14px;
+    font-weight:700;
+    padding:9px 18px;
+    border-radius:20px;
+    border:1.5px solid var(--line);
+    background:var(--card);
+    color:var(--ink-soft);
+    cursor:pointer;
+    white-space:nowrap;
+    transition:all .2s ease;
+  }
+  .tab[data-day="1"].active{background:var(--d1);border-color:var(--d1);color:#fff;}
+  .tab[data-day="2"].active{background:var(--d2);border-color:var(--d2);color:#fff;}
+  .tab[data-day="3"].active{background:var(--d3);border-color:var(--d3);color:#fff;}
+  .tab[data-day="4"].active{background:var(--d4);border-color:var(--d4);color:#fff;}
+  .tab[data-day="5"].active{background:var(--d5);border-color:var(--d5);color:#fff;}
+
+  /* ---------- Day section ---------- */
+  .day{display:none;padding-top:26px;}
+  .day.active{display:block;}
+
+  .day-head{margin-bottom:6px;}
+  .day-head .kicker{
+    font-size:13px;font-weight:700;letter-spacing:.1em;color:var(--ink-soft);
+  }
+  .day-head h2{
+    font-family:'Shippori Mincho',serif;
+    font-size:24px;
+    margin:4px 0 0;
+    font-weight:700;
+  }
+  .day[data-day="1"] .day-head h2{color:var(--d1);}
+  .day[data-day="2"] .day-head h2{color:var(--d2);}
+  .day[data-day="3"] .day-head h2{color:var(--d3);}
+  .day[data-day="4"] .day-head h2{color:var(--d4);}
+  .day[data-day="5"] .day-head h2{color:var(--d5);}
+
+  .note{
+    margin:16px 0 30px;
+    font-size:13.5px;
+    color:var(--ink-soft);
+    background:var(--paper-deep);
+    border-radius:10px;
+    padding:10px 14px;
+    display:inline-flex;
+    gap:8px;
+    align-items:flex-start;
+  }
+  .note svg{flex:0 0 auto;margin-top:2px;}
+
+  /* ---------- Timeline ---------- */
+  .timeline{position:relative;padding-left:0;}
+  .stop{
+    display:grid;
+    grid-template-columns:56px 1fr;
+    gap:16px;
+    position:relative;
+    padding-bottom:30px;
+  }
+  .stop:last-child{padding-bottom:6px;}
+  .stop::before{
+    content:"";
+    position:absolute;
+    left:27px; top:56px; bottom:0;
+    width:2px;
+    background:var(--line);
+  }
+  .stop:last-child::before{display:none;}
+
+  .icon-wrap{
+    width:56px;height:56px;border-radius:50%;
+    display:flex;align-items:center;justify-content:center;
+    background:var(--card);
+    border:2px solid var(--line);
+    flex:0 0 56px;
+    z-index:1;
+  }
+  .day[data-day="1"] .icon-wrap{border-color:var(--d1);color:var(--d1);background:var(--d1-soft);}
+  .day[data-day="2"] .icon-wrap{border-color:var(--d2);color:var(--d2);background:var(--d2-soft);}
+  .day[data-day="3"] .icon-wrap{border-color:var(--d3);color:var(--d3);background:var(--d3-soft);}
+  .day[data-day="4"] .icon-wrap{border-color:var(--d4);color:var(--d4);background:var(--d4-soft);}
+  .day[data-day="5"] .icon-wrap{border-color:var(--d5);color:var(--d5);background:var(--d5-soft);}
+  .icon-wrap svg{width:26px;height:26px;}
+
+  .card{
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:14px;
+    padding:16px 18px;
+  }
+  .card .time{
+    font-size:12.5px;
+    font-weight:700;
+    letter-spacing:.05em;
+    color:var(--ink-soft);
+    margin-bottom:4px;
+  }
+  .card h3{
+    font-family:'Shippori Mincho',serif;
+    font-size:18px;
+    margin:0 0 10px;
+    font-weight:700;
+  }
+  .photo{
+    position:relative;
+    width:100%;
+    height:180px;
+    border-radius:10px;
+    overflow:hidden;
+    background:var(--paper-deep);
+    margin-bottom:12px;
+  }
+  .photo img{
+    position:absolute; inset:0;
+    width:100%;height:100%;
+    object-fit:cover;
+    display:none;
+  }
+  .photo .ph-fallback{
+    position:absolute; inset:0;
+    display:flex; flex-direction:column;
+    align-items:center; justify-content:center;
+    gap:6px;
+    color:var(--ink-soft);
+    background:
+      repeating-linear-gradient(135deg, rgba(0,0,0,.02) 0 10px, transparent 10px 20px),
+      var(--paper-deep);
+  }
+  .photo .ph-fallback svg{width:24px;height:24px;opacity:.55;}
+  .photo .ph-fallback span{font-size:11.5px;letter-spacing:.03em;opacity:.8;}
+  .photo img.loaded + .ph-fallback{display:none;}
+  .card p{
+    margin:0;
+    font-size:14.5px;
+    color:#403C34;
+  }
+  .tags{margin-top:10px;display:flex;flex-wrap:wrap;gap:6px;}
+  .tag{
+    font-size:12px;
+    padding:3px 10px;
+    border-radius:20px;
+    background:var(--paper-deep);
+    color:var(--ink-soft);
+    font-weight:500;
+  }
+  .day[data-day="1"] .tag{background:var(--d1-soft);color:var(--d1);}
+  .day[data-day="2"] .tag{background:var(--d2-soft);color:var(--d2);}
+  .day[data-day="3"] .tag{background:var(--d3-soft);color:var(--d3);}
+  .day[data-day="4"] .tag{background:var(--d4-soft);color:var(--d4);}
+  .day[data-day="5"] .tag{background:var(--d5-soft);color:var(--d5);}
+
+  .card-foot{
+    margin-top:12px;
+    display:flex;
+    justify-content:flex-end;
+  }
+  .nav-btn{
+    display:inline-flex;
+    align-items:center;
+    gap:5px;
+    font-size:12.5px;
+    font-weight:700;
+    text-decoration:none;
+    padding:6px 12px;
+    border-radius:20px;
+    border:1.3px solid var(--line);
+    color:var(--ink);
+    background:var(--paper);
+    transition:filter .15s ease;
+  }
+  .nav-btn:hover{filter:brightness(0.96);}
+  .nav-btn svg{width:13px;height:13px;}
+  .day[data-day="1"] .nav-btn{border-color:var(--d1);color:var(--d1);}
+  .day[data-day="2"] .nav-btn{border-color:var(--d2);color:var(--d2);}
+  .day[data-day="3"] .nav-btn{border-color:var(--d3);color:var(--d3);}
+  .day[data-day="4"] .nav-btn{border-color:var(--d4);color:var(--d4);}
+  .day[data-day="5"] .nav-btn{border-color:var(--d5);color:var(--d5);}
+
+  footer{
+    text-align:center;
+    padding:40px 20px 10px;
+    color:var(--ink-soft);
+    font-size:12.5px;
+    letter-spacing:.06em;
+  }
+
+  @media (max-width:480px){
+    .stop{grid-template-columns:44px 1fr;gap:12px;}
+    .icon-wrap{width:44px;height:44px;flex:0 0 44px;}
+    .icon-wrap svg{width:20px;height:20px;}
+    .stop::before{left:21px;}
+  }
+</style>
+</head>
+<body>
+
+<!-- ============ ICON DEFS ============ -->
+<svg width="0" height="0" style="position:absolute" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+  <symbol id="i-hotel" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+    <path d="M3 21V6.5A1.5 1.5 0 0 1 4.5 5H10v16"/>
+    <path d="M10 10h10.5A1.5 1.5 0 0 1 22 11.5V21"/>
+    <path d="M3 21h19"/>
+    <circle cx="7" cy="12" r="0.8" fill="currentColor" stroke="none"/>
+    <path d="M13.5 14h6M13.5 17h6"/>
+  </symbol>
+  <symbol id="i-bag" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+    <path d="M6 8h12l-1 12.5a1 1 0 0 1-1 .5H8a1 1 0 0 1-1-.9L6 8z"/>
+    <path d="M9 8V6.5a3 3 0 0 1 6 0V8"/>
+  </symbol>
+  <symbol id="i-walk" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+    <circle cx="13.5" cy="4.5" r="1.6" fill="currentColor" stroke="none"/>
+    <path d="M10 22l1.5-6-2-2 .8-5.2L13 7l2.5 2 3 1.3M9.7 14l-3 1.5-1.7 4"/>
+    <path d="M11.5 8.8 10 12l3 2 .3 4.2"/>
+  </symbol>
+  <symbol id="i-tea" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+    <path d="M4 9h13v5a5 5 0 0 1-5 5H9a5 5 0 0 1-5-5V9z"/>
+    <path d="M17 10.5h1.5a2.5 2.5 0 0 1 0 5H17"/>
+    <path d="M8 5.5c0-1 .8-1.2.8-2.2M12 5.5c0-1 .8-1.2.8-2.2"/>
+  </symbol>
+  <symbol id="i-torii" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+    <path d="M2.5 6.5h19"/>
+    <path d="M3.5 4.5c3 1.2 14 1.2 17 0"/>
+    <path d="M6.5 6.5V21M17.5 6.5V21"/>
+    <path d="M10 12h4"/>
+  </symbol>
+  <symbol id="i-park" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+    <circle cx="12" cy="12" r="8.5"/>
+    <path d="M12 3.5V6M12 18v2.5M3.5 12H6M18 12h2.5"/>
+    <path d="M6.5 6.5l1.6 1.6M15.9 15.9l1.6 1.6M6.5 17.5l1.6-1.6M15.9 8.1l1.6-1.6"/>
+    <circle cx="12" cy="12" r="2.2" fill="currentColor" stroke="none"/>
+  </symbol>
+  <symbol id="i-food" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+    <path d="M4 12.5a8 4.5 0 0 1 16 0"/>
+    <path d="M3 12.5h18"/>
+    <path d="M6 12.5c0 4 2.5 6.5 6 6.5s6-2.5 6-6.5"/>
+    <path d="M12 3v3.2M9 3.6v2.6M15 3.6v2.6"/>
+  </symbol>
+  <symbol id="i-train" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+    <rect x="5" y="4" width="14" height="12" rx="3"/>
+    <path d="M5 11h14"/>
+    <circle cx="9" cy="14" r="0.6" fill="currentColor" stroke="none"/>
+    <circle cx="15" cy="14" r="0.6" fill="currentColor" stroke="none"/>
+    <path d="M8 20l-2 2M16 20l2 2M9 16v2M15 16v2"/>
+  </symbol>
+  <symbol id="i-plane" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+    <path d="M2.5 15.5 21 9c1-.4 1-1.6 0-2s-2.6-.2-3.4.4L12 11 5.5 9 4 10l4.5 3.3L6 16l-2.5-.5-1 .8 2.5 1.7z"/>
+  </symbol>
+  <symbol id="i-note" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+    <circle cx="12" cy="12" r="9.2"/>
+    <path d="M12 8v5"/>
+    <circle cx="12" cy="16" r="0.9" fill="currentColor" stroke="none"/>
+  </symbol>
+  <symbol id="i-camera" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+    <path d="M4 8.5a1.5 1.5 0 0 1 1.5-1.5h1.8l1-1.6h7.4l1 1.6h1.8A1.5 1.5 0 0 1 20 8.5v9a1.5 1.5 0 0 1-1.5 1.5h-13A1.5 1.5 0 0 1 4 17.5v-9z"/>
+    <circle cx="12" cy="13" r="3.4"/>
+  </symbol>
+  <symbol id="i-pin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7">
+    <path d="M12 21.5s7-6.4 7-12A7 7 0 0 0 5 9.5c0 5.6 7 12 7 12z"/>
+    <circle cx="12" cy="9.5" r="2.4"/>
+  </symbol>
+</svg>
+
+<div class="wrap">
+  <header>
+    <div class="stamp-row"><span></span><span></span><span></span></div>
+    <h1>大阪<span class="accent">・</span>京都 五天四夜</h1>
+    <p class="sub">2026 . 09 . 11 — 09 . 15　行程與神社全攻略</p>
+    <div class="rule"></div>
+  </header>
+
+  <div class="tabs" id="tabs"></div>
+  <div id="days"></div>
+
+  <footer>祝旅途順風・御守要收好・時間抓緊一點</footer>
+</div>
+
+<script>
+const DATA = [
+  {
+    day:1, date:"9/11（四）", title:"梅田商圈採買・中崎町悠閒漫步",
+    note:"前一天晚上先買好隔天早餐",
+    stops:[
+      {time:"上午/中午", icon:"hotel", name:"入住阪急大阪龍仕柏飯店", desc:"Hotel Hankyu RESPIRE OSAKA，抵達後先辦理入住。", img:"day1-hotel-checkin.jpg", mapUrl:"https://maps.app.goo.gl/cAL8gPk8rCdEpN7g6"},
+      {time:"上午/中午", icon:"bag", name:"Yodobashi-Umeda 採買", desc:"飯店樓下商場，買行動電源（Anker / CIO）、休足時間貼布、球鞋。", img:"day1-yodobashi-umeda.jpg", mapUrl:"https://www.google.com/maps/search/?api=1&query=%E3%83%A8%E3%83%89%E3%83%90%E3%82%B7%E6%A2%85%E7%94%B0"},
+      {time:"下午", icon:"walk", name:"中崎町", desc:"大阪知名的文青復古街區，老屋改建的咖啡廳、選物店、雜貨鋪林立，適合悠閒散步拍照。", img:"day1-nakazakicho.jpg", mapUrl:"https://www.google.com/maps/search/?api=1&query=%E4%B8%AD%E5%B4%8E%E7%94%BA%20%E5%A4%A7%E9%98%AA"},
+      {time:"下午", icon:"bag", name:"天神橋筋商店街", desc:"接續中崎町，全長約2.6公里的懷舊商店街，小吃、藥妝、生活用品都有。", img:"day1-tenjinbashisuji.jpg", mapUrl:"https://www.google.com/maps/search/?api=1&query=%E5%A4%A9%E7%A5%9E%E6%A9%8B%E7%AD%8B%E5%95%86%E5%BA%97%E8%A1%97"},
+      {time:"下午茶", icon:"tea", name:"田中表具店 掛軸茶屋", desc:"大阪車站前第2大樓B2的抹茶甜點名店，地下街指標較複雜，建議多留點時間找路。", img:"day1-kakejiku-chaya.jpg", mapUrl:"https://www.google.com/maps/search/?api=1&query=%E7%94%B0%E4%B8%AD%E8%A1%A8%E5%85%B7%E5%BA%97%20%E6%8E%9B%E8%BB%B8%E8%8C%B6%E5%B1%8B%20%E6%A2%85%E7%94%B0"},
+      {time:"傍晚～晚上", icon:"bag", name:"梅田商圈逛街晚餐", desc:"LUCUA、Grand Front、阪急百貨一帶悠閒逛街用餐，之後回飯店休息。", img:"day1-umeda-shopping.jpg", mapUrl:"https://www.google.com/maps/search/?api=1&query=LUCUA%E5%A4%A7%E9%98%AA"}
+    ]
+  },
+  {
+    day:2, date:"9/12（五）", title:"京都一日遊",
+    note:"跟老闆同遊",
+    stops:[
+      {time:"整天", icon:"train", name:"京都一日遊", desc:"與老闆一起前往京都，行程細節依當天安排。", img:"day2-kyoto-daytrip.jpg", mapUrl:"https://www.google.com/maps/search/?api=1&query=%E4%BA%AC%E9%83%BD%E9%A7%85"}
+    ]
+  },
+  {
+    day:3, date:"9/13（六）", title:"USJ半日・大阪四大神社（由南向北）・壽喜燒",
+    note:"神社行程緊湊，時間點請盡量抓準；サムハラ神社授與所較早關門",
+    stops:[
+      {time:"08:30–12:15", icon:"park", name:"日本環球影城（USJ）", desc:"半日遊玩，12:15刷出閘門準備前往神社行程。", img:"day3-usj.jpg", mapUrl:"https://www.google.com/maps/search/?api=1&query=Universal%20Studios%20Japan"},
+      {time:"13:15–14:00", icon:"torii", name:"大鳥大社", desc:"JR鳳站。求必勝勝運、突破求財、交通安全。", tags:["必買：透明刺繡勝守"], img:"day3-otori-taisha.jpg", mapUrl:"https://maps.app.goo.gl/ZPdAwbMoYV6PX9436"},
+      {time:"14:40–15:10", icon:"torii", name:"今宮戎神社", desc:"JR新今宮站／地鐵惠美須町站。求正宗商業繁盛、求大財、業績長紅。", tags:["必買：招財金福笹","招財御守"], img:"day3-imamiya-ebisu.jpg", mapUrl:"https://www.google.com/maps/search/?api=1&query=%E4%BB%8A%E5%AE%AE%E6%88%8E%E7%A5%9E%E7%A4%BE"},
+      {time:"15:40–16:20", icon:"torii", name:"サムハラ神社", desc:"地鐵阿波座站2號出口。關西最強能量點之一，求絕對避災護身、無病延命。", tags:["必買：紅底金字神字肌守"], img:"day3-samuhara-jinja.jpg", mapUrl:"https://www.google.com/maps/search/?api=1&query=%E3%82%B5%E3%83%A0%E3%83%8F%E3%83%A9%E7%A5%9E%E7%A4%BE%20%E5%A4%A7%E9%98%AA"},
+      {time:"17:00–17:40", icon:"torii", name:"露天神社", desc:"梅田站穿過曾根崎商店街，授與所18:00關門。求學業考試合格（菅原道真學問神）、戀愛良緣、容貌美麗。", tags:["必買：考試合格守","美人守"], img:"day3-tsuyunoten-jinja.jpg", mapUrl:"https://maps.app.goo.gl/4kUCaehmPsPcB6Nx7"},
+      {time:"18:00", icon:"food", name:"晚餐：KITTE大阪5F SUKIYAKI SHABUSHABU TSUKADA", desc:"豬肉壽喜燒晚餐，位置在飯店附近。", img:"day3-kitte-sukiyaki.jpg", mapUrl:"https://maps.app.goo.gl/J2tXwQKZniHxSMmY6"}
+    ]
+  },
+  {
+    day:4, date:"9/14（日）", title:"京都極致順路・巫女體驗・水占卜・夜間八坂",
+    note:"巫女體驗14:00開始；貴船神社授與所16:30關門，體驗結束後建議直接搭計程車前往",
+    stops:[
+      {time:"07:15", icon:"train", name:"大阪梅田搭JR出發", desc:"前往京都，展開一日神社巡禮。", img:"day4-jr-departure.jpg", mapUrl:"https://www.google.com/maps/search/?api=1&query=JR%E5%A4%A7%E9%98%AA%E9%A7%85"},
+      {time:"08:00–09:45", icon:"torii", name:"伏見稻荷大社", desc:"JR稻荷站。求商業繁盛、五穀豐收、家宅平安。清晨造訪可拍到人少的千本鳥居。", tags:["白狐御守"], img:"day4-fushimi-inari.jpg", mapUrl:"https://maps.app.goo.gl/bcsdL2J8NqUXs1rw7"},
+      {time:"10:30–12:00", icon:"torii", name:"河合神社＆下鴨神社", desc:"京阪出町柳站。河合神社：女性第一美麗神，可手繪鏡繪馬、喝美容花梨水；下鴨神社：八咫烏指引升學考試明路、解題開竅。", tags:["蕾絲媛守"], img:"day4-kawai-shimogamo.jpg", mapUrl:"https://www.google.com/maps/search/?api=1&query=%E6%B2%B3%E5%90%88%E7%A5%9E%E7%A4%BE%20%E4%BA%AC%E9%83%BD"},
+      {time:"12:15–13:30", icon:"food", name:"出町柳或四條大宮周邊午餐", desc:"自由用餐，補充體力準備下午行程。", img:"day4-lunch-demachiyanagi.jpg", mapUrl:"https://www.google.com/maps/search/?api=1&query=%E5%87%BA%E7%94%BA%E6%9F%B3%E9%A7%85"},
+      {time:"14:00–15:30", icon:"torii", name:"武信稻荷神社", desc:"阪急大宮站／地鐵二條城前站。14:00進行巫女文化體驗；求一寸法師開智出世（突破考試關卡）、龍馬良緣圓滿、求財。", img:"day4-takenobu-inari.jpg", mapUrl:"https://maps.app.goo.gl/JYNGHRnB9cMB4mN27"},
+      {time:"16:10–17:15", icon:"torii", name:"貴船神社", desc:"體驗結束後搭計程車約35分直達，趕16:30授與所。以水占卜御籤聞名，同時主管考試合格、各行業運氣昇騰、結社良緣。", img:"day4-kifune-jinja.jpg", mapUrl:"https://www.google.com/maps/search/?api=1&query=%E8%B2%B4%E8%88%B9%E7%A5%9E%E7%A4%BE"},
+      {time:"17:15–18:30", icon:"train", name:"搭叡山電車下山，前往四條河原町", desc:"轉搭電車返回市區。", img:"day4-eizan-train.jpg", mapUrl:"https://www.google.com/maps/search/?api=1&query=%E5%8F%A1%E5%B1%B1%E9%9B%BB%E9%89%84%20%E5%87%BA%E7%94%BA%E6%9F%B3%E9%A7%85"},
+      {time:"18:30–19:30", icon:"bag", name:"四條河原町／祇園採買抹茶粉", desc:"採買日本頂級抹茶粉，推薦一保堂、祇園辻利。", img:"day4-gion-matcha.jpg", mapUrl:"https://www.google.com/maps/search/?api=1&query=%E7%A5%87%E5%9C%92%E8%BE%BB%E5%88%A9%20%E6%9C%AC%E5%BA%97"},
+      {time:"19:30–20:30", icon:"torii", name:"八坂神社", desc:"京阪祇園四條站。夜間舞殿提燈全亮，美御前社美肌神水可輕拍雙頰，主管消災除厄。", img:"day4-yasaka-jinja.jpg", mapUrl:"https://maps.app.goo.gl/E68AXvsaRzS7NosZ9"},
+      {time:"20:30", icon:"food", name:"祇園晚餐，返回大阪", desc:"用餐後搭阪急特急直達回大阪梅田飯店。", img:"day4-gion-dinner.jpg", mapUrl:"https://www.google.com/maps/search/?api=1&query=%E7%A5%87%E5%9C%92%20%E4%BA%AC%E9%83%BD"}
+    ]
+  },
+  {
+    day:5, date:"9/15（一）", title:"大阪雙神社・梅田瘋狂採買・機場",
+    note:"回程日，行程需保留機場交通時間",
+    stops:[
+      {time:"09:30–10:20", icon:"torii", name:"櫻宮神社", desc:"JR櫻之宮站。求健康平癒、家內安全。", tags:["必買：櫻花蕾絲御守"], img:"day5-sakuranomiya.jpg", mapUrl:"https://www.google.com/maps/search/?api=1&query=%E6%AB%BB%E5%AE%AE%E7%A5%9E%E7%A4%BE%20%E5%A4%A7%E9%98%AA"},
+      {time:"10:30–11:30", icon:"torii", name:"大阪城豐國神社", desc:"JR大阪城公園站。供奉豐臣秀吉，求立身出世、升職加薪、事業大開、考試脫穎而出。", tags:["必買：出世開運葫蘆守"], img:"day5-toyokuni-jinja.jpg", mapUrl:"https://www.google.com/maps/search/?api=1&query=%E8%B1%8A%E5%9B%BD%E7%A5%9E%E7%A4%BE%20%E5%A4%A7%E9%98%AA%E5%9F%8E"},
+      {time:"11:45–下午", icon:"bag", name:"梅田商圈採買", desc:"採買親友清單：芳瑜（保健品、瘦身軟糖）、禹豪（酸痛貼布、衣服）——大國藥妝、梅田百貨；電器3C可逛Bic Camera／Yodobashi；超商必吃7-11、Lawson美食。", img:"day5-umeda-shopping.jpg", mapUrl:"https://www.google.com/maps/search/?api=1&query=%E6%A2%85%E7%94%B0%20%E5%A4%A7%E9%98%AA"},
+      {time:"傍晚", icon:"plane", name:"取行李前往機場", desc:"回飯店取行李，前往關西機場搭機返台。", img:"day5-airport.jpg", mapUrl:"https://www.google.com/maps/search/?api=1&query=%E9%96%A2%E8%A5%BF%E5%9B%BD%E9%9A%9B%E7%A9%BA%E6%B8%AF"}
+    ]
+  }
+];
+
+const tabsEl = document.getElementById('tabs');
+const daysEl = document.getElementById('days');
+
+DATA.forEach((d, idx) => {
+  const tab = document.createElement('button');
+  tab.className = 'tab' + (idx===0 ? ' active' : '');
+  tab.dataset.day = d.day;
+  tab.textContent = `Day ${d.day}｜${d.date}`;
+  tab.onclick = () => selectDay(d.day);
+  tabsEl.appendChild(tab);
+
+  const section = document.createElement('section');
+  section.className = 'day' + (idx===0 ? ' active' : '');
+  section.dataset.day = d.day;
+
+  const noteHtml = d.note ? `
+    <div class="note">
+      <svg width="15" height="15" viewBox="0 0 24 24"><use href="#i-note" xlink:href="#i-note"></use></svg>
+      <span>${d.note}</span>
+    </div>` : '';
+
+  const stopsHtml = d.stops.map(s => `
+    <div class="stop">
+      <div class="icon-wrap"><svg viewBox="0 0 24 24"><use href="#i-${s.icon}" xlink:href="#i-${s.icon}"></use></svg></div>
+      <div class="card">
+        <div class="time">${s.time}</div>
+        <h3>${s.name}</h3>
+        <div class="photo">
+          <img src="photos/${s.img}" alt="${s.name}" onload="this.style.display='block'; this.classList.add('loaded')" onerror="this.style.display='none'">
+          <div class="ph-fallback">
+            <svg><use href="#i-camera" xlink:href="#i-camera"></use></svg>
+            <span>photos/${s.img}</span>
+          </div>
+        </div>
+        <p>${s.desc}</p>
+        ${s.tags ? `<div class="tags">${s.tags.map(t=>`<span class="tag">${t}</span>`).join('')}</div>` : ''}
+        <div class="card-foot">
+          <a class="nav-btn" href="${s.mapUrl}" target="_blank" rel="noopener">
+            <svg viewBox="0 0 24 24"><use href="#i-pin" xlink:href="#i-pin"></use></svg>
+            開啟導航
+          </a>
+        </div>
+      </div>
+    </div>
+  `).join('');
+
+  section.innerHTML = `
+    <div class="day-head">
+      <div class="kicker">DAY ${d.day} ／ ${d.date}</div>
+      <h2>${d.title}</h2>
+    </div>
+    ${noteHtml}
+    <div class="timeline">${stopsHtml}</div>
+  `;
+  daysEl.appendChild(section);
+});
+
+function selectDay(day){
+  document.querySelectorAll('.tab').forEach(t => t.classList.toggle('active', +t.dataset.day === day));
+  document.querySelectorAll('.day').forEach(s => s.classList.toggle('active', +s.dataset.day === day));
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+</script>
+</body>
+</html>
