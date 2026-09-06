@@ -281,6 +281,19 @@ img {
   border-radius: 12px;
   display: block;
 }
+  /* 精準修正相片容器與圖片高度 */
+.photo {
+  height: 220px !important;       /* 容器高度拉高，可視喜好改成 200px~260px */
+  border-radius: 12px !important;
+  overflow: hidden !important;
+}
+
+.photo img {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;   /* 滿版裁切不變形 */
+  display: block !important;
+}
 </style>
 </head>
 <body>
