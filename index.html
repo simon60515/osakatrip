@@ -272,6 +272,15 @@
     .icon-wrap svg{width:20px;height:20px;}
     .stop::before{left:21px;}
   }
+  /* 強制修正行程卡片內的圖片比例 */
+img {
+  width: 100% !important;
+  height: auto !important;
+  aspect-ratio: 16 / 9 !important;
+  object-fit: cover !important;
+  border-radius: 12px;
+  display: block;
+}
 </style>
 </head>
 <body>
