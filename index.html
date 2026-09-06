@@ -7,6 +7,43 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@500;700;800&family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
+  /* 1. 隱藏破圖框：當圖片是透明 SVG 或空值時，隱藏整個圖片外框 */
+.photo:has(img[src*="data:image"]),
+.photo:has(img[src=""]),
+.card-photo:has(img[src*="data:image"]) {
+  display: none !important;
+}
+
+/* 2. 隱藏空白導航按鈕：當連結沒有網址或為空時，隱藏按鈕 */
+a[href=""],
+a[href="#"],
+a:not([href*="http"]) {
+  display: none !important;
+}
+
+/* 3. 讓打勾清單單行條列排好，不擠成一團 */
+.chk-group {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 10px !important;
+  margin-top: 10px !important;
+}
+
+.chk-item {
+  display: flex !important;
+  align-items: flex-start !important;
+  gap: 10px !important;
+  font-size: 15px !important;
+  line-height: 1.5 !important;
+  cursor: pointer !important;
+}
+
+.chk-item input[type="checkbox"] {
+  width: 18px !important;
+  height: 18px !important;
+  margin-top: 2px !important;
+  flex-shrink: 0 !important;
+}
 /* 1. 只有行前準備（Day 0）隱藏照片與導航按鈕 */
 [data-day="0"] .photo,
 [data-day="0"] .card-photo,
@@ -469,7 +506,7 @@ if (currentDay === 0 || currentDay === "行前") {
   `;
 }
 const DATA = [
- {
+  {
     day: 0,
     date: "出發前核對",
     title: "行李清單・行前準備確認",
