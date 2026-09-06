@@ -7,35 +7,48 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@500;700;800&family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
-  /* 1. 隱藏灰色圖片框（只要圖片載入錯誤或透明就直接隱藏整塊） */
-.card .photo,
-.card-photo,
-div:has(> img[src*="data:image"]) {
+/* 1. 只有行前準備（Day 0）隱藏照片與導航按鈕 */
+[data-day="0"] .photo,
+[data-day="0"] .card-photo,
+[data-day="0"] a.btn-map,
+[data-day="0"] a:has(svg),
+[data-day="0"] .map-link {
   display: none !important;
 }
 
-/* 2. 隱藏行前準備的「開啟導航」按鈕 */
-/* 當 mapUrl 為空，或者沒有包含 http 連結時自動隱藏 */
-a.btn-map[href=""],
-a.btn-map[href="#"],
-a.btn-map:not([href*="http"]),
-.map-btn:not([href*="http"]),
-button:has(svg.icon-nav),
-a:has(span:contains("開啟導航")) {
+/* 如果你的外層容器是用其他 class，也可針對空連結精準隱藏導航 */
+a[href=""], a[href="#"] {
   display: none !important;
 }
 
-/* 萬一按鈕還是出現，可以直接用這個精確選取器強制隱藏右下角按鈕： */
-.card a[href=""] {
-  display: none !important;
-}
-
-/* 3. 讓打勾清單垂直條列排版、不擠在一起 */
+/* 2. 確保行前準備打勾清單垂直條列排版 */
 .chk-group {
   display: flex !important;
   flex-direction: column !important;
   gap: 10px !important;
   margin-top: 12px !important;
+}
+
+.chk-item {
+  display: flex !important;
+  align-items: flex-start !important;
+  gap: 10px !important;
+  font-size: 15px !important;
+  line-height: 1.5 !important;
+  cursor: pointer !important;
+}
+
+.chk-item input[type="checkbox"] {
+  width: 18px !important;
+  height: 18px !important;
+  margin-top: 2px !important;
+  flex-shrink: 0 !important;
+  accent-color: #2e7d32 !important;
+}
+
+.chk-item:has(input:checked) {
+  opacity: 0.45 !important;
+  text-decoration: line-through !important;
 }
 
 .chk-item {
