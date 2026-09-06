@@ -448,74 +448,71 @@ img {
 </div>
 
 <script>
+  // 判斷是否為行前準備 (day === 0 或 day === "行前")
+if (currentDay === 0 || currentDay === "行前") {
+  // 純清單卡片：不放照片標籤、不放導航按鈕
+  cardHtml += `
+    <div class="card checklist-card">
+      <div class="card-title" style="font-weight:bold; font-size:18px; margin-bottom:12px;">${stop.name}</div>
+      <div class="card-desc">${stop.desc}</div>
+    </div>
+  `;
+} else {
+  // 一般景點卡片：維持原本帶有圖片與導航的寫法
+  cardHtml += `
+    <div class="card">
+      <div class="card-title">${stop.name}</div>
+      <div class="photo"><img src="photos/${stop.img}"></div>
+      <div class="card-desc">${stop.desc}</div>
+      <a href="${stop.mapUrl}" class="btn-map">開啟導航</a>
+    </div>
+  `;
+}
 const DATA = [
-  {
+ {
     day: 0,
-    date: "出發前核對",
-    day: "行前",
     date: "出發前核對",
     title: "行李清單・行前準備確認",
     note: "點擊方塊可直接打勾標記，出發前逐項核對完成！",
     stops: [
       {
-        time: "",
-        icon: "bag",
         name: "重要證件與通關金流",
         desc: "<div class='chk-group'>" +
           "<label class='chk-item'><input type='checkbox'> 護照（效期確認 6 個月以上）</label>" +
           "<label class='chk-item'><input type='checkbox'> 台灣身分證</label>" +
-          "<label class='chk-item'><input type='checkbox'> Visit Japan Web (VJW) 填寫完成＋截圖 QR Code 存相簿</label>" +
-          "<label class='chk-item'><input type='checkbox'> 環球影城 (USJ) 電子門票 / 快速通關 QR 憑證</label>" +
-          "<label class='chk-item'><input type='checkbox'> 日幣現金（多備千円鈔、準備夾鏈袋集中 5 円投賽錢）</label>" +
-          "<label class='chk-item'><input type='checkbox'> 海外高回饋信用卡（確認開通國外交易與預借現金密碼）</label>" +
+          "<label class='chk-item'><input type='checkbox'> Visit Japan Web (VJW) 填寫完成＋截圖 QR Code</label>" +
+          "<label class='chk-item'><input type='checkbox'> 環球影城 (USJ) 電子門票 / 快速通關憑證</label>" +
+          "<label class='chk-item'><input type='checkbox'> 日幣現金、海外高回饋信用卡</label>" +
           "<label class='chk-item'><input type='checkbox'> 交通卡加入 Apple Wallet（Suica / ICOCA）並先加值</label>" +
-          "</div>",
-        img: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'/%3E",
-        mapUrl: ""
+          "</div>"
       },
       {
-        time: "",
-        icon: "walk",
-        name: "3C 通訊與隨身防護",
+        name: "3C 通訊與隨身裝備",
         desc: "<div class='chk-group'>" +
-          "<label class='chk-item'><input type='checkbox'> 日本 eSIM / 網卡（確認開通說明與安裝憑證）</label>" +
-          "<label class='chk-item'><input type='checkbox'> 行動電源（⚠️ 必須放隨身行李，嚴禁託運！）</label>" +
-          "<label class='chk-item'><input type='checkbox'> 手機充電線、多孔快充充電頭</label>" +
-          "<label class='chk-item'><input type='checkbox'> 耳機（飛機或電車上使用）</label>" +
-          "<label class='chk-item'><input type='checkbox'> A5 / B6 硬質收納夾（保護神社御守、水占卜籤詩防折損）</label>" +
-          "</div>",
-        img: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'/%3E",
-        mapUrl: ""
+          "<label class='chk-item'><input type='checkbox'> 日本 eSIM / 網卡確認開通</label>" +
+          "<label class='chk-item'><input type='checkbox'> 行動電源（⚠️ 隨身攜帶，嚴禁託運！）</label>" +
+          "<label class='chk-item'><input type='checkbox'> 手機充電線、多孔快充插頭、耳機</label>" +
+          "<label class='chk-item'><input type='checkbox'> A5 / B6 硬質收納夾（保護神社御守與籤詩）</label>" +
+          "</div>"
       },
       {
-        time: "",
-        icon: "hotel",
         name: "常備藥品與個人盥洗",
         desc: "<div class='chk-group'>" +
-          "<label class='chk-item'><input type='checkbox'> 常備藥品（感冒藥、腸胃藥、止痛藥、暈車藥）</label>" +
-          "<label class='chk-item'><input type='checkbox'> 牙刷、牙膏</label>" +
-          "<label class='chk-item'><input type='checkbox'> 化妝包、卸妝品、刮鬍刀</label>" +
-          "<label class='chk-item'><input type='checkbox'> 袖珍面紙、濕紙巾（日本部分小吃店未備面紙）</label>" +
-          "</div>",
-        img: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'/%3E",
-        mapUrl: ""
+          "<label class='chk-item'><input type='checkbox'> 常備藥品（感冒、腸胃、止痛、暈車藥）</label>" +
+          "<label class='chk-item'><input type='checkbox'> 牙刷、牙膏、化妝包、卸妝品、刮鬍刀</label>" +
+          "<label class='chk-item'><input type='checkbox'> 袖珍面紙、濕紙巾</label>" +
+          "</div>"
       },
       {
-        time: "",
-        icon: "bag",
-        name: "衣物穿搭與行李箱配置",
+        name: "衣物穿搭與行李收納",
         desc: "<div class='chk-group'>" +
-          "<label class='chk-item'><input type='checkbox'> 換洗衣物（3-4 套、內衣褲、厚底毛圈襪）</label>" +
-          "<label class='chk-item'><input type='checkbox'> 薄外套 / 防曬衫（貴船山區與冷氣房備用）</label>" +
-          "<label class='chk-item'><input type='checkbox'> 好走的運動球鞋（每日步數 1.5 萬步起跳）</label>" +
-          "<label class='chk-item'><input type='checkbox'> 輕便晴雨折疊傘</label>" +
-          "<label class='chk-item'><input type='checkbox'> 真空壓縮袋（回程衣服壓縮製造採買空間）</label>" +
-          "<label class='chk-item'><input type='checkbox'> 行李吊牌（大箱託運 23kg 標記）</label>" +
-          "<label class='chk-item'><input type='checkbox'> 20 吋手提箱（限重 7kg，嚴禁裝超過 100ml 液體藥妝）</label>" +
-          "</div>",
-        img: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'/%3E",
-        mapUrl: ""
-}
+          "<label class='chk-item'><input type='checkbox'> 換洗衣物（3-4 套、厚底毛圈襪）</label>" +
+          "<label class='chk-item'><input type='checkbox'> 薄外套 / 防曬衫、輕便折疊傘</label>" +
+          "<label class='chk-item'><input type='checkbox'> 好走的運動球鞋</label>" +
+          "<label class='chk-item'><input type='checkbox'> 真空壓縮袋、行李吊牌</label>" +
+          "<label class='chk-item'><input type='checkbox'> 20 吋手提箱（限重 7kg，嚴禁放超過 100ml 液體）</label>" +
+          "</div>"
+      }
     ]
   },
   {
