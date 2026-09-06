@@ -7,6 +7,30 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@500;700;800&family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
+  /* 點擊放大查看的黑底全螢幕遮罩 */
+.img-modal {
+  display: none;
+  position: fixed;
+  z-index: 99999;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.95);
+  justify-content: center;
+  align-items: center;
+  padding: 16px;
+  box-sizing: border-box;
+}
+
+/* 展開後的原尺寸圖片：不裁切、完整顯示、點擊關閉 */
+.img-modal img {
+  max-width: 100%;
+  max-height: 90vh;
+  object-fit: contain;
+  border-radius: 8px;
+  cursor: zoom-out;
+}
   /* 只要檔名是折價券或門票，就完整顯示原圖，不裁切條碼 */
 
   height: auto !important;
@@ -792,6 +816,25 @@ function selectDay(day){
   document.querySelectorAll('.day').forEach(s => s.classList.toggle('active', +s.dataset.day === day));
   window.scrollTo({top:0, behavior:'smooth'});
 }
+</script>
+  <!-- 全螢幕原圖彈窗 -->
+<div id="fullImgModal" class="img-modal" onclick="this.style.display='none'">
+  <img id="fullImgTarget" src="" alt="原圖檢視">
+</div>
+
+<script>
+// 點擊優惠券圖片時，開啟全螢幕原圖
+document.addEventListener('click', function(e) {
+  // 只鎖定折價券或 USJ 的圖片
+  if (e.target.tagName === 'IMG' && (e.target.src.includes('coupon') || e.target.src.includes('usj'))) {
+    const modal = document.getElementById('fullImgModal');
+    const target = document.getElementById('fullImgTarget');
+    if (modal && target) {
+      target.src = e.target.src;
+      modal.style.display = 'flex';
+    }
+  }
+});
 </script>
 </body>
 </html>
