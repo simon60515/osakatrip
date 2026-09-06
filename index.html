@@ -7,6 +7,44 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@500;700;800&family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
+/* 1. 當圖片載入失敗、為空或為透明圖時，強制隱藏圖片外框 */
+.photo:empty,
+.photo:has(img[src=""]),
+.photo:has(img[src*="data:image"]),
+.card-photo:has(img[src*="data:image"]) {
+  display: none !important;
+}
+
+/* 2. 當按鈕沒有連結時，強制隱藏導航按鈕 */
+a.btn-map[href=""],
+a.btn-map[href="#"],
+a[href=""] {
+  display: none !important;
+}
+
+/* 3. 打勾清單直式條列排版 */
+.chk-group {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 10px !important;
+  margin-top: 10px !important;
+}
+
+.chk-item {
+  display: flex !important;
+  align-items: flex-start !important;
+  gap: 10px !important;
+  font-size: 15px !important;
+  line-height: 1.5 !important;
+  cursor: pointer !important;
+}
+
+.chk-item input[type="checkbox"] {
+  width: 18px !important;
+  height: 18px !important;
+  margin-top: 2px !important;
+  flex-shrink: 0 !important;
+}
   /* 1. 隱藏破圖框：當圖片是透明 SVG 或空值時，隱藏整個圖片外框 */
 .photo:has(img[src*="data:image"]),
 .photo:has(img[src=""]),
@@ -485,26 +523,7 @@ img {
 </div>
 
 <script>
-  // 判斷是否為行前準備 (day === 0 或 day === "行前")
-if (currentDay === 0 || currentDay === "行前") {
-  // 純清單卡片：不放照片標籤、不放導航按鈕
-  cardHtml += `
-    <div class="card checklist-card">
-      <div class="card-title" style="font-weight:bold; font-size:18px; margin-bottom:12px;">${stop.name}</div>
-      <div class="card-desc">${stop.desc}</div>
-    </div>
-  `;
-} else {
-  // 一般景點卡片：維持原本帶有圖片與導航的寫法
-  cardHtml += `
-    <div class="card">
-      <div class="card-title">${stop.name}</div>
-      <div class="photo"><img src="photos/${stop.img}"></div>
-      <div class="card-desc">${stop.desc}</div>
-      <a href="${stop.mapUrl}" class="btn-map">開啟導航</a>
-    </div>
-  `;
-}
+ 
 const DATA = [
   {
     day: 0,
