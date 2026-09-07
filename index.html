@@ -623,76 +623,62 @@ img {
 <script>
  
 const DATA = [
- {
+{
     day: "買",
     date: "關西採買清單",
     title: "🛍️ 採買清單（大阪梅田 ＆ 京都散策）",
-    note: "進店前看一眼直接鎖定目標，不用浪費時間盲逛！",
-    stops: [
-      {
-        time: "梅田・LUCUA 8F",
-        icon: "bag",
-        name: "🌿 無印良品 MUJI（必買好物）",
-        desc: "・可折疊便攜頸枕<br>・鋁製折疊 S 型掛勾<br>・香氛蠟燭（金屬盒款）<br>・泡沫洗鞋慕斯（免水洗清潔）<br>・異國風味速食咖哩包",
-        img: "",
-        mapUrl: "https://maps.google.com/?q=MUJI+LUCUA+Osaka"
-      },
-      {
-        time: "梅田・阪急茶屋町",
-        icon: "bag",
-        name: "👕 UNIQLO OSAKA（全關西最大旗艦店）",
-        desc: "・日本限定聯名 UT<br>・寬版工裝褲 / 降落傘褲<br>・防風機能連帽外套<br>・HEATTECH 發熱衣系列（價差大）",
-        img: "",
-        mapUrl: "https://maps.google.com/?q=UNIQLO+OSAKA"
-      },
-      {
-        time: "梅田・阪急百貨 B1",
-        icon: "food",
-        name: "🎁 阪急梅田 頂級甜點伴手禮",
-        desc: "・阿闍梨餅（不用跑京都本店，單顆現吃）<br>・Bâton d'or 頂級發酵奶油 Pocky<br>・Grand Calbee 頂級厚切洋芋片<br>・Échiré 艾許奶油夾心餅乾",
-        img: "",
-        mapUrl: "https://maps.google.com/?q=Hankyu+Umeda+Main+Store"
-      },
-      {
-        time: "梅田・LUCUA 8F / 地下街",
-        icon: "bag",
-        name: "🪙 3COINS 質感生活小物",
-        desc: "・質感編織手機掛繩（附夾片）<br>・物理雙層壓縮收納袋<br>・旅行分裝瓶組 / 質感飾品收納盒",
-        img: "",
-        mapUrl: "https://maps.google.com/?q=3COINS+LUCUA+Osaka"
-      },
-      {
-        time: "京都・西洞院",
-        icon: "food",
-        name: "🍵 丸久小山園 西洞院店（茶房 元庵）",
-        desc: "・招牌流心抹茶蛋糕捲<br>・季節特選抹茶甜點拼盤<br>・抹茶粉 / 煎茶茶葉伴手禮<br>・抹茶費南雪 / 抹茶法蘭酥禮盒",
-        img: "",
-        mapUrl: "https://maps.google.com/?q=Marukyu+Koyamaen+Nishinotoin"
-      },
-      {
-        time: "京都・咖啡名店",
-        icon: "food",
-        name: "☕ ACTUAL KYOTO",
-        desc: "・濃郁抹茶拿鐵（Matcha Latte）<br>・現烤濃郁巴斯克乳酪蛋糕<br>・手沖單品咖啡 / 冰滴咖啡",
-        img: "",
-        mapUrl: "https://maps.google.com/?q=ACTUAL+KYOTO"
-      },
-      {
-        time: "京都・清水寺周邊",
-        icon: "bag",
-        name: "⛩️ 清水寺散策・抹茶與工藝品",
-        desc: "・Gokago / 八十八良葉舍：現刷抹茶拿鐵 ＆ 抹茶冰淇淋<br>・松韻堂：職人手作京燒・清水燒抹茶碗<br>・七味家本舖：清水寺旁百年七味唐辛子<br>・本家西尾八橋 / 井筒八橋（生八橋肉桂紅豆）<br>・yojiya 優佳雅（吸油面紙 / 護手霜）",
-        img: "",
-        mapUrl: "https://maps.google.com/?q=Kiyomizu-dera"
-      },
-      {
-        time: "京都・嵐山周邊",
-        icon: "food",
-        name: "🎋 嵐山竹林周邊小吃",
-        desc: "・中村屋總本店：現炸牛肉可樂餅<br>・古都芋本舖：炙燒醬油糰子 / 四色霜淇淋<br>・嵯峨豆腐三忠：胡麻豆腐 / 鯡魚蕎麥麵",
-        img: "",
-        mapUrl: "https://maps.google.com/?q=Togetsukyo+Bridge"
-      }
+    note: "買齊後直接點擊方塊打勾，狀態會自動儲存！",
+    items: [
+      // ＝＝＝ 大阪梅田區：電器量販 ＝＝＝
+      { text: "【📍 大阪梅田｜⚡ 必逛大型電器行】", done: false },
+      { text: "Yodobashi-Umeda（友愛德寶梅田旗艦店，飯店隔壁直通）", done: false },
+      { text: "Bic Camera / EDION（可搭配免稅 10% + 7% 折價券）", done: false },
+      { text: "鎖定：Panasonic 吹風機 / 刮鬍刀", done: false },
+      { text: "鎖定：虎牌/象印 保溫杯與電子鍋", done: false },
+      { text: "鎖定：行動電源、相機配件與抗噪耳機", done: false },
+
+      // ＝＝＝ 大阪梅田區：服飾雜貨 ＝＝＝
+      { text: "【📍 大阪梅田｜🌿 無印良品（LUCUA 8F）】", done: false },
+      { text: "可折疊便攜頸枕", done: false },
+      { text: "鋁製折疊 S 型掛勾", done: false },
+      { text: "香氛蠟燭（金屬盒款）", done: false },
+      { text: "泡沫洗鞋慕斯（免水洗）", done: false },
+      { text: "異國風味速食咖哩包", done: false },
+
+      { text: "【📍 大阪梅田｜👕 UNIQLO OSAKA（最大旗艦店）】", done: false },
+      { text: "日本限定聯名 UT", done: false },
+      { text: "寬版工裝褲 / 降落傘褲", done: false },
+      { text: "防風機能連帽外套", done: false },
+      { text: "HEATTECH 發熱衣系列", done: false },
+
+      { text: "【📍 大阪梅田｜🎁 阪急百貨 B1 伴手禮】", done: false },
+      { text: "阿闍梨餅（不用跑京都本店，單顆現吃）", done: false },
+      { text: "Bâton d'or 頂級發酵奶油 Pocky", done: false },
+      { text: "Grand Calbee 頂級厚切洋芋片", done: false },
+      { text: "Échiré 艾許奶油夾心餅乾", done: false },
+
+      { text: "【📍 大阪梅田｜🪙 3COINS 質感小物】", done: false },
+      { text: "質感編織手機掛繩（附夾片）", done: false },
+      { text: "物理雙層壓縮收納袋", done: false },
+      { text: "旅行分裝瓶組 / 飾品收納盒", done: false },
+
+      // ＝＝＝ 京都散策區 ＝＝＝
+      { text: "【📍 京都散策｜🍵 丸久小山園 西洞院店】", done: false },
+      { text: "招牌流心抹茶蛋糕捲", done: false },
+      { text: "外帶抹茶粉 / 煎茶伴手禮", done: false },
+
+      { text: "【📍 京都散策｜☕ ACTUAL KYOTO】", done: false },
+      { text: "招牌濃郁抹茶拿鐵", done: false },
+      { text: "現烤濃郁巴斯克乳酪蛋糕", done: false },
+
+      { text: "【📍 京都散策｜⛩️ 清水寺周邊】", done: false },
+      { text: "Gokago / 八十八良葉舍：現刷抹茶拿鐵＆冰淇淋", done: false },
+      { text: "松韻堂：職人手作京燒・清水燒抹茶碗", done: false },
+      { text: "七味家本舖：百年七味唐辛子", done: false },
+
+      { text: "【📍 京都散策｜🎋 嵐山周邊】", done: false },
+      { text: "中村屋總本店：現炸牛肉可樂餅", done: false },
+      { text: "古都芋本舖：炙燒醬油糰子", done: false }
     ]
   },
  {
