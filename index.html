@@ -849,8 +849,9 @@ DATA.forEach((d, idx) => {
 });
 
 function selectDay(day){
-  document.querySelectorAll('.tab').forEach(t => t.classList.toggle('active', +t.dataset.day === day));
-  document.querySelectorAll('.day').forEach(s => s.classList.toggle('active', +s.dataset.day === day));
+  const key = String(day);
+  document.querySelectorAll('.tab').forEach(t => t.classList.toggle('active', t.dataset.day === key));
+  document.querySelectorAll('.day').forEach(s => s.classList.toggle('active', s.dataset.day === key));
   window.scrollTo({top:0, behavior:'smooth'});
 }
 </script>
