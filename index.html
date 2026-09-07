@@ -543,6 +543,131 @@ div:has(> img[src*="undefined"]),
 div:empty:has(+ .desc) {
   display: none !important;
 }
+
+/* ============ 封面（首頁） ============ */
+#cover {
+  min-height: 100vh;
+  padding: 40px 20px 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--paper, #f5efe4);
+}
+.cover-inner {
+  max-width: 500px;
+  width: 100%;
+  text-align: center;
+}
+.cover-stamp-row {
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+  margin-bottom: 24px;
+}
+.cover-stamp-row span {
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: #b7987e;
+  opacity: 0.5;
+}
+.cover-title {
+  font-family: 'Shippori Mincho', serif;
+  font-size: clamp(36px, 8vw, 52px);
+  font-weight: 700;
+  line-height: 1.35;
+  margin: 0 0 16px;
+  color: #3d3125;
+}
+.cover-title .accent { color: #c47a3d; }
+.cover-date {
+  font-size: 13px;
+  letter-spacing: 0.25em;
+  color: #7a6957;
+  margin: 0 0 6px;
+}
+.cover-countdown {
+  font-size: 13px;
+  color: #c47a3d;
+  font-weight: 500;
+  margin: 0 0 40px;
+  letter-spacing: 0.1em;
+}
+.cover-menu {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.cover-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  border: 1px solid rgba(155, 130, 100, 0.2);
+  border-radius: 12px;
+  background: #fdfaf3;
+  cursor: pointer;
+  transition: transform 0.15s, box-shadow 0.15s, background 0.15s;
+  text-align: left;
+  font-family: inherit;
+  color: inherit;
+  font-size: 15px;
+  width: 100%;
+}
+.cover-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0,0,0,0.06);
+  background: #fff;
+}
+.cover-card-label {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.cover-card-day {
+  font-weight: 700;
+  font-size: 15px;
+  color: #3d3125;
+}
+.cover-card-desc {
+  color: #7a6957;
+  font-size: 12.5px;
+}
+.cover-card-arrow {
+  color: #c47a3d;
+  font-size: 20px;
+  font-weight: 300;
+}
+.cover-card[data-day="券"] { border-left: 4px solid #d4a574; }
+.cover-card[data-day="0"] { border-left: 4px solid #8b8b8b; }
+.cover-card[data-day="1"] { border-left: 4px solid var(--d1, #6a8fa8); }
+.cover-card[data-day="2"] { border-left: 4px solid var(--d2, #8ab08a); }
+.cover-card[data-day="3"] { border-left: 4px solid var(--d3, #c47a3d); }
+.cover-card[data-day="4"] { border-left: 4px solid var(--d4, #9578a0); }
+.cover-card[data-day="5"] { border-left: 4px solid var(--d5, #b06b6b); }
+
+/* 返回封面按鈕 */
+.btn-home {
+  position: fixed;
+  top: 12px;
+  left: 12px;
+  z-index: 9999;
+  background: rgba(255,255,255,0.95);
+  border: 1px solid rgba(155,130,100,0.3);
+  border-radius: 20px;
+  padding: 8px 14px 8px 12px;
+  font-size: 13px;
+  color: #3d3125;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-family: inherit;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+}
+.btn-home:hover {
+  background: #fff;
+}
 </style>
 </head>
 <body>
@@ -613,7 +738,19 @@ div:empty:has(+ .desc) {
   </symbol>
 </svg>
 
-<div class="wrap">
+<!-- ============ 封面 ============ -->
+<section id="cover">
+  <div class="cover-inner">
+    <div class="cover-stamp-row"><span></span><span></span><span></span></div>
+    <h1 class="cover-title">大阪<span class="accent">・</span>京都<br>五天四夜</h1>
+    <p class="cover-date">2026.09.11 — 09.15</p>
+    <p class="cover-countdown" id="cover-countdown"></p>
+    <div class="cover-menu" id="cover-menu"></div>
+  </div>
+</section>
+
+<div class="wrap" id="mainWrap" style="display:none;">
+  <button class="btn-home" onclick="goHome()" aria-label="返回封面">← 首頁</button>
   <header>
     <div class="stamp-row"><span></span><span></span><span></span></div>
     <h1>大阪<span class="accent">・</span>京都 五天四夜</h1>
@@ -826,7 +963,7 @@ const DATA = [
       {time:"上午/中午", icon:"hotel", name:"入住阪急大阪龍仕柏飯店（ホテル阪急レスパイア大阪）", desc:"Hotel Hankyu RESPIRE OSAKA，抵達後先辦理入住。<br><br>⚠️ 飯店大廳位於商場高樓層，需從地面搭乘專用直達電梯，注意別在商場內部迷路。", img:"day1-hotel-checkin.jpg", mapUrl:"https://maps.app.goo.gl/cAL8gPk8rCdEpN7g6"},
       {time:"上午/中午", icon:"bag", name:"梅田大型電器賣場採買（家電量販店 かでんりょうはんてん）", desc:"飯店樓下商場，買行動電源（Anker / CIO）、休足時間貼布、球鞋。", img:"day1-yodobashi-umeda.jpg", mapUrl:"https://www.google.com/maps/search/?api=1&query=%E3%83%A8%E3%83%89%E3%83%90%E3%82%B7%E6%A2%85%E7%94%B0"},
       {time:"下午", icon:"walk", name:"中崎町文青街區（中崎町 なかざきちょう）", desc:"大阪知名的文青復古街區<br>老屋改建的咖啡廳、選物店、雜貨鋪林立，適合悠閒散步拍照。", img:"day1-nakazakicho.jpg", mapUrl:"https://www.google.com/maps/search/?api=1&query=%E4%B8%AD%E5%B4%8E%E7%94%BA%20%E5%A4%A7%E9%98%AA"},
-      {time:"下午", icon:"bag", name:"天神橋筋商店街（天神橋筋商店街 てんじんばしすじ）", desc:"接續中崎町，全長約2.6公里的懷舊商店街<br>小吃、藥妝、生活用品都有。<br> ☑️中村屋可樂餅（2丁目）<br> ☑️春駒壽司或天滿壽司 <br>☑️ 鳴門鯛魚燒本舖：推薦品嚐地瓜口味（鳴門金時）的現烤鯛魚燒。<br>❣️血拚購物：這裡的 OS Drug 或其他藥妝、玉出超市價格通常比觀光區更親民，適合慢慢挖寶", img:"day1-tenjinbashisuji.jpg", mapUrl:"https://www.google.com/maps/search/?api=1&query=%E5%A4%A9%E7%A5%9E%E6%A9%8B%E7%AD%8B%E5%95%86%E5%BA%97%E8%A1%97"},
+      {time:"下午", icon:"bag", name:"天神橋筋商店街（天神橋筋商店街 てんじんばしすじ）", desc:"接續中崎町，全長約2.6公里的懷舊商店街<br>小吃、藥妝、生活用品都有。", img:"day1-tenjinbashisuji.jpg", mapUrl:"https://www.google.com/maps/search/?api=1&query=%E5%A4%A9%E7%A5%9E%E6%A9%8B%E7%AD%8B%E5%95%86%E5%BA%97%E8%A1%97"},
       {time:"下午茶", icon:"tea", name:"掛軸茶屋 田中表具店", desc:"大阪車站前第2大樓B2的抹茶甜點名店<br>地下街指標較複雜，建議多留點時間找路。<br><br>⏰ 地下街店家營業時間可能較早結束，留意最後點餐時間。", img:"day1-kakejiku-chaya.jpg", mapUrl:"https://www.google.com/maps/search/?api=1&query=%E7%94%B0%E4%B8%AD%E8%A1%A8%E5%85%B7%E5%BA%97%20%E6%8E%9B%E8%BB%B8%E8%8C%B6%E5%B1%8B%20%E6%A2%85%E7%94%B0"},
       {time:"傍晚～晚上", icon:"bag", name:"梅田商圈逛街晚餐", desc:"LUCUA、Grand Front、阪急百貨一帶悠閒逛街用餐，之後回飯店休息。", img:"day1-umeda-shopping.jpg", mapUrl:"https://www.google.com/maps/search/?api=1&query=LUCUA%E5%A4%A7%E9%98%AA"}
     ]
@@ -1003,6 +1140,50 @@ function selectDay(day){
   document.querySelectorAll('.day').forEach(s => s.classList.toggle('active', s.dataset.day === key));
   window.scrollTo({top:0, behavior:'smooth'});
 }
+
+/* ============ 封面 + 頁面切換 ============ */
+function buildCover(){
+  const menu = document.getElementById('cover-menu');
+  if (!menu) return;
+  menu.innerHTML = DATA.map(d => {
+    const dayStr = String(d.day).replace(/^Day\s*/i, '');
+    const label = dayStr === '券' ? '免稅折價券・預約憑證' : (dayStr === '0' ? '出發前核對' : (d.title || d.date));
+    const dayText = `Day ${dayStr}`;
+    return `<button class="cover-card" data-day="${dayStr}" onclick="gotoDay('${dayStr}')">
+      <span class="cover-card-label">
+        <span class="cover-card-day">${dayText}</span>
+        <span class="cover-card-desc">${label}</span>
+      </span>
+      <span class="cover-card-arrow">→</span>
+    </button>`;
+  }).join('');
+
+  // 倒數
+  const cd = document.getElementById('cover-countdown');
+  if (cd) {
+    const trip = new Date('2026-09-11');
+    const now = new Date();
+    const daysLeft = Math.ceil((trip - now) / 86400000);
+    if (daysLeft > 0) cd.textContent = `距出發還有 ${daysLeft} 天`;
+    else if (daysLeft === 0) cd.textContent = '今天出發！';
+    else if (daysLeft >= -4) cd.textContent = '旅途進行中';
+    else cd.textContent = '旅途已結束';
+  }
+}
+
+function gotoDay(day){
+  document.getElementById('cover').style.display = 'none';
+  document.getElementById('mainWrap').style.display = 'block';
+  selectDay(day);
+}
+
+function goHome(){
+  document.getElementById('cover').style.display = 'flex';
+  document.getElementById('mainWrap').style.display = 'none';
+  window.scrollTo({top: 0});
+}
+
+buildCover();
 </script>
   <!-- 全螢幕原圖彈窗 -->
 <div id="fullImgModal" class="img-modal" onclick="this.style.display='none'">
