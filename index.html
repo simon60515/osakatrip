@@ -993,7 +993,44 @@ div:empty:has(+ .desc) {
 <script>
  
 const DATA = [
- 
+ {
+    day: "記帳",
+    date: "隨手記帳本",
+    title: "💰 旅費收支與每日小計",
+    note: "隨手記錄日幣花費，自動換算台幣並按天統計！",
+    stops: [
+      {
+        time: "即時記帳",
+        name: "新增花費",
+        desc: `
+          <div style="background:#fff; border:1px solid #e2d9cc; border-radius:10px; padding:12px; box-shadow:0 2px 4px rgba(0,0,0,0.03);">
+            <div style="display:flex; gap:6px; margin-bottom:8px;">
+              <select id="pg-exp-day" style="padding:8px; border:1px solid #ccc; border-radius:6px; font-size:14px; background:#fff;">
+                <option value="D1">D1</option>
+                <option value="D2">D2</option>
+                <option value="D3">D3</option>
+                <option value="D4">D4</option>
+                <option value="D5">D5</option>
+                <option value="其他">其他</option>
+              </select>
+              <input type="text" id="pg-exp-name" placeholder="品項（如：拉麵）" style="flex:1; padding:8px; border:1px solid #ccc; border-radius:6px; font-size:14px;">
+            </div>
+            <div style="display:flex; gap:6px; margin-bottom:10px;">
+              <input type="number" id="pg-exp-amount" placeholder="日幣金額 ¥" style="flex:1; padding:8px; border:1px solid #ccc; border-radius:6px; font-size:14px;">
+              <button onclick="window.saveNewExpense()" style="background:#a3704c; color:#fff; border:none; border-radius:6px; padding:8px 16px; font-size:14px; font-weight:bold; cursor:pointer;">記下一筆</button>
+            </div>
+
+            <!-- 每日小計區塊 -->
+            <div id="pg-exp-summary" style="background:#f9f6f0; border-radius:6px; padding:10px; margin-bottom:10px; font-size:12px; line-height:1.6;"></div>
+
+            <!-- 明細清單 -->
+            <div style="font-weight:bold; font-size:13px; color:#5a4a42; margin-bottom:6px;">📋 消費明細</div>
+            <div id="pg-exp-list" style="max-height:260px; overflow-y:auto; font-size:13px;"></div>
+          </div>
+        `
+      }
+    ]
+  },
 {
     day: "買",
     date: "關西採買清單",
@@ -1440,34 +1477,6 @@ buildCover();
       <span>（1 日幣 = ? 台幣）</span>
     </div>
     <p class="fx-hint">匯率可自行調整，會記住你設的數字</p>
-    <!-- 👇 記帳功能區塊 -->
-      <div style="margin-top: 15px; border-top: 1px dashed #e2d9cc; padding-top: 12px;">
-        <div style="font-size: 13px; font-weight: bold; color: #5a4a42; margin-bottom: 8px;">💰 隨手記一筆</div>
-        <div style="display: flex; gap: 6px; margin-bottom: 8px;">
-          <select id="quick-exp-day" style="padding: 6px; border: 1px solid #ddd; border-radius: 6px; font-size: 13px; background: #fff;">
-            <option value="D1">D1</option>
-            <option value="D2">D2</option>
-            <option value="D3">D3</option>
-            <option value="D4">D4</option>
-            <option value="D5">D5</option>
-            <option value="其他">其他</option>
-          </select>
-          <input type="text" id="quick-exp-name" placeholder="項目（如：超商）" style="flex: 1; padding: 6px 8px; border: 1px solid #ddd; border-radius: 6px; font-size: 13px;">
-          <button type="button" onclick="
-  const d = document.getElementById('quick-exp-day').value;
-  const nEl = document.getElementById('quick-exp-name');
-  const jEl = document.getElementById('fx-jpy');
-  const n = nEl ? nEl.value.trim() : '';
-  const a = Number(jEl ? jEl.value : 0);
-  if(!a || a <= 0){ alert('請先在上方輸入日幣金額！'); return; }
-  if(!n){ alert('請輸入品項名稱！'); return; }
-  const l = JSON.parse(localStorage.getItem('trip_quick_expenses') || '[]');
-  l.push({ day: d, name: n, amount: a });
-  localStorage.setItem('trip_quick_expenses', JSON.stringify(l));
-  nEl.value = '';
-  renderQuickExpenses();
-" style="background: #a3704c; color: #fff; border: none; border-radius: 6px; padding: 6px 12px; font-size: 13px; font-weight: bold; cursor: pointer;">記下</button>
-        </div>
 
         <div style="display: flex; justify-content: space-between; font-size: 12px; color: #7a6a58; margin-bottom: 6px; font-weight: bold;">
           <span id="quick-exp-total">總計：¥0 (NT$ 0)</span>
@@ -1670,6 +1679,93 @@ function renderQuickExpenses() {
     listEl.innerHTML = listHtml || '<div style="color:#aaa; text-align:center; padding:6px;">尚無記帳紀錄</div>';
   }
 }
+});
+</script>
+  <script>
+// 獨立記帳功能邏輯
+window.saveNewExpense = function() {
+  const day = document.getElementById("pg-exp-day").value;
+  const nameInput = document.getElementById("pg-exp-name");
+  const amtInput = document.getElementById("pg-exp-amount");
+
+  const name = nameInput ? nameInput.value.trim() : "";
+  const amount = Number(amtInput ? amtInput.value : 0);
+
+  if (!name) {
+    alert("請輸入品項名稱！");
+    return;
+  }
+  if (!amount || amount <= 0) {
+    alert("請輸入大於 0 的日幣金額！");
+    return;
+  }
+
+  const list = JSON.parse(localStorage.getItem("trip_book_records") || "[]");
+  list.unshift({ day, name, amount }); // 最新記錄排在最前面
+  localStorage.setItem("trip_book_records", JSON.stringify(list));
+
+  nameInput.value = "";
+  amtInput.value = "";
+  window.drawExpenseUI();
+};
+
+window.removeExpense = function(index) {
+  const list = JSON.parse(localStorage.getItem("trip_book_records") || "[]");
+  list.splice(index, 1);
+  localStorage.setItem("trip_book_records", JSON.stringify(list));
+  window.drawExpenseUI();
+};
+
+window.drawExpenseUI = function() {
+  const list = JSON.parse(localStorage.getItem("trip_book_records") || "[]");
+  const rate = 0.21; // 預設匯率
+
+  let totalJPY = 0;
+  const dayTotals = {};
+
+  list.forEach(item => {
+    const amt = Number(item.amount) || 0;
+    totalJPY += amt;
+    dayTotals[item.day] = (dayTotals[item.day] || 0) + amt;
+  });
+
+  // 渲染每日小計
+  const days = ["D1", "D2", "D3", "D4", "D5", "其他"];
+  let summaryHtml = '<div style="font-weight:bold; font-size:14px; margin-bottom:4px;">總花費：¥' + totalJPY.toLocaleString() + ' <span style="font-size:12px; color:#666;">(約 NT$ ' + Math.round(totalJPY * rate).toLocaleString() + ')</span></div><div style="display:flex; flex-wrap:wrap; gap:4px;">';
+  
+  days.forEach(d => {
+    const dAmt = dayTotals[d] || 0;
+    if (dAmt > 0) {
+      summaryHtml += '<span style="background:#fff; border:1px solid #ddd; border-radius:4px; padding:2px 6px; font-size:11px;"><b>' + d + ':</b> ¥' + dAmt.toLocaleString() + ' ($' + Math.round(dAmt * rate) + ')</span>';
+    }
+  });
+  summaryHtml += '</div>';
+
+  // 渲染詳細列表
+  let listHtml = "";
+  list.forEach((item, index) => {
+    listHtml += `
+      <div style="display:flex; justify-content:space-between; align-items:center; padding:6px 0; border-bottom:1px solid #eee;">
+        <span><b style="background:#eee; padding:1px 5px; border-radius:3px; font-size:11px;">${item.day}</b> ${item.name}</span>
+        <span>
+          ¥${Number(item.amount).toLocaleString()} 
+          <span style="color:#888; font-size:11px;">($${Math.round(item.amount * rate)})</span>
+          <button onclick="window.removeExpense(${index})" style="border:none; background:none; color:#c0392b; cursor:pointer; font-weight:bold; margin-left:6px;">✕</button>
+        </span>
+      </div>
+    `;
+  });
+
+  const sumEl = document.getElementById("pg-exp-summary");
+  const listEl = document.getElementById("pg-exp-list");
+
+  if (sumEl) sumEl.innerHTML = summaryHtml;
+  if (listEl) listEl.innerHTML = listHtml || '<div style="color:#999; text-align:center; padding:8px;">目前還沒有記帳紀錄</div>';
+};
+
+// 監聽點擊切換到「記帳」頁籤時自動繪製
+document.addEventListener("click", function() {
+  setTimeout(window.drawExpenseUI, 100);
 });
 </script>
 </body>
