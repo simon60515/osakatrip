@@ -537,8 +537,7 @@ img {
   display: block !important;
 }
   /* 隱藏未設定圖片的灰色占位框 */
-[class*="photo"]:has(:not(img[src])),
-[class*="image"]:has(:not(img[src])),
+.photo:not(:has(img[src])),
 .card-img:empty,
 div:has(> img[src*="undefined"]),
 div:empty:has(+ .desc) {
