@@ -623,82 +623,75 @@ img {
 <script>
  
 const DATA = [
-  {
+ {
     day: "買",
-    date: "關西採買靈感清單",
+    date: "關西採買清單",
     title: "🛍️ 採買清單（大阪梅田 ＆ 京都散策）",
-    note: "買齊後直接點擊方塊打勾，狀態會自動儲存在手機裡！",
-    shoppingCategories: [
+    note: "進店前看一眼直接鎖定目標，不用浪費時間盲逛！",
+    stops: [
       {
-        store: "📍 大阪梅田｜🌿 無印良品 MUJI（LUCUA 8F）",
-        items: [
-          "可折疊便攜頸枕",
-          "鋁製折疊 S 型掛勾",
-          "香氛蠟燭（金屬盒款）",
-          "泡沫洗鞋慕斯（免水洗清潔）",
-          "異國風味速食咖哩包（奶油雞肉/綠咖哩）"
-        ]
+        time: "梅田・LUCUA 8F",
+        icon: "bag",
+        name: "🌿 無印良品 MUJI（必買好物）",
+        desc: "・可折疊便攜頸枕<br>・鋁製折疊 S 型掛勾<br>・香氛蠟燭（金屬盒款）<br>・泡沫洗鞋慕斯（免水洗清潔）<br>・異國風味速食咖哩包",
+        img: "",
+        mapUrl: "https://maps.google.com/?q=MUJI+LUCUA+Osaka"
       },
       {
-        store: "📍 大阪梅田｜👕 UNIQLO OSAKA（全關西最大旗艦店）",
-        items: [
-          "日本限定聯名 UT",
-          "寬版工裝褲 / 降落傘褲",
-          "防風機能連帽外套",
-          "HEATTECH 發熱衣系列（價差划算）"
-        ]
+        time: "梅田・阪急茶屋町",
+        icon: "bag",
+        name: "👕 UNIQLO OSAKA（全關西最大旗艦店）",
+        desc: "・日本限定聯名 UT<br>・寬版工裝褲 / 降落傘褲<br>・防風機能連帽外套<br>・HEATTECH 發熱衣系列（價差大）",
+        img: "",
+        mapUrl: "https://maps.google.com/?q=UNIQLO+OSAKA"
       },
       {
-        store: "📍 大阪梅田｜🎁 阪急百貨梅田總店 B1 甜點伴手禮",
-        items: [
-          "阿闍梨餅（不用跑京都本店，單顆現吃）",
-          "Bâton d'or 頂級發酵奶油 Pocky",
-          "Grand Calbee 頂級厚切洋芋片",
-          "Échiré 艾許奶油夾心餅乾"
-        ]
+        time: "梅田・阪急百貨 B1",
+        icon: "food",
+        name: "🎁 阪急梅田 頂級甜點伴手禮",
+        desc: "・阿闍梨餅（不用跑京都本店，單顆現吃）<br>・Bâton d'or 頂級發酵奶油 Pocky<br>・Grand Calbee 頂級厚切洋芋片<br>・Échiré 艾許奶油夾心餅乾",
+        img: "",
+        mapUrl: "https://maps.google.com/?q=Hankyu+Umeda+Main+Store"
       },
       {
-        store: "📍 大阪梅田｜🪙 3COINS（LUCUA 8F / 地下街）",
-        items: [
-          "質感編織手機掛繩（附夾片）",
-          "物理雙層壓縮收納袋",
-          "旅行分裝瓶組 / 質感飾品收納盒"
-        ]
+        time: "梅田・LUCUA 8F / 地下街",
+        icon: "bag",
+        name: "🪙 3COINS 質感生活小物",
+        desc: "・質感編織手機掛繩（附夾片）<br>・物理雙層壓縮收納袋<br>・旅行分裝瓶組 / 質感飾品收納盒",
+        img: "",
+        mapUrl: "https://maps.google.com/?q=3COINS+LUCUA+Osaka"
       },
       {
-        store: "📍 京都散策｜🍵 丸久小山園 西洞院店（茶房 元庵）",
-        items: [
-          "招牌流心抹茶蛋糕捲（抹茶ロールケーキ）",
-          "季節特選抹茶甜點拼盤",
-          "外帶抹茶粉 / 煎茶茶葉伴手禮",
-          "抹茶費南雪 / 抹茶法蘭酥禮盒"
-        ]
+        time: "京都・西洞院",
+        icon: "food",
+        name: "🍵 丸久小山園 西洞院店（茶房 元庵）",
+        desc: "・招牌流心抹茶蛋糕捲<br>・季節特選抹茶甜點拼盤<br>・抹茶粉 / 煎茶茶葉伴手禮<br>・抹茶費南雪 / 抹茶法蘭酥禮盒",
+        img: "",
+        mapUrl: "https://maps.google.com/?q=Marukyu+Koyamaen+Nishinotoin"
       },
       {
-        store: "📍 京都散策｜☕ ACTUAL KYOTO（風格咖啡名店）",
-        items: [
-          "招牌濃郁抹茶拿鐵（Matcha Latte）",
-          "現烤濃郁巴斯克乳酪蛋糕（Basque Cheesecake）",
-          "手沖單品咖啡 / 冰滴咖啡"
-        ]
+        time: "京都・咖啡名店",
+        icon: "food",
+        name: "☕ ACTUAL KYOTO",
+        desc: "・濃郁抹茶拿鐵（Matcha Latte）<br>・現烤濃郁巴斯克乳酪蛋糕<br>・手沖單品咖啡 / 冰滴咖啡",
+        img: "",
+        mapUrl: "https://maps.google.com/?q=ACTUAL+KYOTO"
       },
       {
-        store: "📍 京都散策｜⛩️ 清水寺周邊・抹茶與工藝品",
-        items: [
-          "Gokago / 八十八良葉舍：現刷抹茶拿鐵 ＆ 抹茶冰淇淋",
-          "松韻堂：職人手作京燒・清水燒抹茶碗",
-          "七味家本舖：清水寺旁百年七味唐辛子",
-          "本家西尾八橋 / 井筒八橋（生八橋肉桂紅豆）",
-          "yojiya 優佳雅（經典吸油面紙 / 護手霜）"
-        ]
+        time: "京都・清水寺周邊",
+        icon: "bag",
+        name: "⛩️ 清水寺散策・抹茶與工藝品",
+        desc: "・Gokago / 八十八良葉舍：現刷抹茶拿鐵 ＆ 抹茶冰淇淋<br>・松韻堂：職人手作京燒・清水燒抹茶碗<br>・七味家本舖：清水寺旁百年七味唐辛子<br>・本家西尾八橋 / 井筒八橋（生八橋肉桂紅豆）<br>・yojiya 優佳雅（吸油面紙 / 護手霜）",
+        img: "",
+        mapUrl: "https://maps.google.com/?q=Kiyomizu-dera"
       },
       {
-        store: "📍 京都散策｜🎋 嵐山竹林周邊小吃",
-        items: [
-          "中村屋總本店（現炸牛肉可樂餅）",
-          "古都芋本舖（炙燒醬油糰子 / 四色霜淇淋）",
-          "嵯峨豆腐三忠（胡麻豆腐 / 鯡魚蕎麥麵）"
-        ]
+        time: "京都・嵐山周邊",
+        icon: "food",
+        name: "🎋 嵐山竹林周邊小吃",
+        desc: "・中村屋總本店：現炸牛肉可樂餅<br>・古都芋本舖：炙燒醬油糰子 / 四色霜淇淋<br>・嵯峨豆腐三忠：胡麻豆腐 / 鯡魚蕎麥麵",
+        img: "",
+        mapUrl: "https://maps.google.com/?q=Togetsukyo+Bridge"
       }
     ]
   },
