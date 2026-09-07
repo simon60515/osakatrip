@@ -38,6 +38,30 @@
 .img-modal {
   padding: 0 !important;
 }
+.img-modal-close {
+  position: fixed;
+  top: 12px;
+  right: 12px;
+  z-index: 100000;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(255,255,255,0.92);
+  color: #333;
+  font-size: 26px;
+  line-height: 1;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.4);
+  padding: 0;
+  font-weight: 300;
+}
+.img-modal-close:hover {
+  background: rgba(255,255,255,1);
+}
   /* 折價券 / USJ 門票：頁面顯示縮圖(置中、完整不裁切)，點擊可放大原圖 */
 .photo:has(img[src*="coupon"]),
 .photo:has(img[src*="usj"]),
@@ -832,6 +856,7 @@ function selectDay(day){
 </script>
   <!-- 全螢幕原圖彈窗 -->
 <div id="fullImgModal" class="img-modal" onclick="this.style.display='none'">
+  <button class="img-modal-close" onclick="event.stopPropagation(); document.getElementById('fullImgModal').style.display='none'" aria-label="關閉">×</button>
   <img id="fullImgTarget" src="" alt="原圖檢視">
 </div>
 
