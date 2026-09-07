@@ -1488,10 +1488,40 @@ buildCover();
   </div>
 </div>
 <script>
+// 1. 初始化讀取匯率
 (function(){
   const saved = localStorage.getItem('fxRate');
-  if (saved) document.getElementById('fx-rate').value = saved;
+  if (saved && document.getElementById('fx-rate')) {
+    document.getElementById('fx-rate').value = saved;
+  }
 })();
+
+// 2. 日幣轉台幣
+function fxFromJpy() {
+  const jpyEl = document.getElementById('fx-jpy');
+  const twdEl = document.getElementById('fx-twd');
+  const rateEl = document.getElementById('fx-rate');
+  const rate = parseFloat(rateEl ? rateEl.value : 0.21) || 0.21;
+  
+  if (jpyEl && twdEl) {
+    const val = parseFloat(jpyEl.value);
+    twdEl.value = isNaN(val) ? '' : Math.round(val * rate);
+  }
+}
+
+// 3. 台幣轉日幣
+function fxFromTwd() {
+  const jpyEl = document.getElementById('fx-jpy');
+  const twdEl = document.getElementById('fx-twd');
+  const rateEl = document.getElementById('fx-rate');
+  const rate = parseFloat(rateEl ? rateEl.value : 0.21) || 0.21;
+  
+  if (jpyEl && twdEl && rate > 0) {
+    const val = parseFloat(twdEl.value);
+    jpyEl.value = isNaN(val) ? '' : Math.round(val / rate);
+  }
+}
+</script>
   // 快速記帳功能
 function addQuickExpense() {
   const day = document.getElementById("quick-exp-day").value;
