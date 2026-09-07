@@ -1500,22 +1500,46 @@ function addQuickExpense() {
   document.getElementById("quick-exp-name").value = "";
   renderQuickExpenses();
 }
-
+// 渲染記帳清單與每日小計加總
 function renderQuickExpenses() {
   const list = JSON.parse(localStorage.getItem("trip_quick_expenses") || "[]");
   const rateInput = document.querySelector("input[value*='0.2']") || { value: 0.21 };
   const rate = parseFloat(rateInput.value) || 0.21;
 
   let totalJPY = 0;
-  let html = "";
+  // 統計每一天的花費
+  const dayTotals = {};
 
+  list.forEach(item => {
+    const amt = Number(item.amount) || 0;
+    totalJPY += amt;
+    dayTotals[item.day] = (dayTotals[item.day] || 0) + amt;
+  });
+
+  // 1. 生成「每日小計」區塊
+  const days = ["D1", "D2", "D3", "D4", "D5", "其他"];
+  let dailySummaryHtml = '<div style="display: flex; flex-wrap: wrap; gap: 4px; margin-bottom: 8px;">';
+  
+  days.forEach(d => {
+    const dAmt = dayTotals[d] || 0;
+    if (dAmt > 0) {
+      dailySummaryHtml += `
+        <span style="background: #f1f5f9; border: 1px solid #e2e8f0; border-radius: 4px; padding: 2px 6px; font-size: 11px; color: #475569;">
+          <b>${d}:</b> ¥${dAmt.toLocaleString()} ($${Math.round(dAmt * rate)})
+        </span>
+      `;
+    }
+  });
+  dailySummaryHtml += '</div>';
+
+  // 2. 生成詳細明細清單
+  let listHtml = "";
   list.forEach((item, index) => {
-    totalJPY += item.amount;
-    html += `
-      <div style="display: flex; justify-content: space-between; align-items: center; padding: 4px 0; border-bottom: 1px solid #f7f4ee;">
+    listHtml += `
+      <div style="display: flex; justify-content: space-between; align-items: center; padding: 5px 0; border-bottom: 1px solid #f7f4ee;">
         <span><b style="background:#eee; padding:1px 4px; border-radius:3px; font-size:10px;">${item.day}</b> ${item.name}</span>
         <span>
-          ¥${item.amount.toLocaleString()} 
+          ¥${Number(item.amount).toLocaleString()} 
           <span style="color:#888; font-size:11px;">($${Math.round(item.amount * rate)})</span>
           <button onclick="deleteQuickExpense(${index})" style="border:none; background:none; color:#c0392b; cursor:pointer; font-weight:bold; margin-left:4px;">✕</button>
         </span>
@@ -1523,35 +1547,23 @@ function renderQuickExpenses() {
     `;
   });
 
+  // 3. 渲染至畫面上
   const listEl = document.getElementById("quick-exp-list");
   const totalEl = document.getElementById("quick-exp-total");
-  if (listEl) listEl.innerHTML = html || '<div style="color:#aaa; text-align:center; padding:6px;">尚無記帳紀錄</div>';
-  if (totalEl) totalEl.innerText = `總計：¥${totalJPY.toLocaleString()} (約 NT$ ${Math.round(totalJPY * rate).toLocaleString()})`;
-}
-
-function deleteQuickExpense(index) {
-  const list = JSON.parse(localStorage.getItem("trip_quick_expenses") || "[]");
-  list.splice(index, 1);
-  localStorage.setItem("trip_quick_expenses", JSON.stringify(list));
-  renderQuickExpenses();
-}
-
-// 頁面載入時初始化清單
-renderQuickExpenses();
-</script>
-
-<script>
-// 點擊優惠券圖片時，開啟全螢幕原圖
-document.addEventListener('click', function(e) {
-  // 只鎖定折價券或 USJ 的圖片
-  if (e.target.tagName === 'IMG' && (e.target.src.includes('coupon') || e.target.src.includes('usj'))) {
-    const modal = document.getElementById('fullImgModal');
-    const target = document.getElementById('fullImgTarget');
-    if (modal && target) {
-      target.src = e.target.src;
-      modal.style.display = 'flex';
-    }
+  
+  if (totalEl) {
+    totalEl.innerHTML = `
+      <div style="margin-bottom: 4px; font-size: 13px; color: #1e293b;">
+        總計：¥${totalJPY.toLocaleString()} <span style="font-size: 12px; color: #64748b;">(約 NT$ ${Math.round(totalJPY * rate).toLocaleString()})</span>
+      </div>
+      ${dailySummaryHtml}
+    `;
   }
+  
+  if (listEl) {
+    listEl.innerHTML = listHtml || '<div style="color:#aaa; text-align:center; padding:6px;">尚無記帳紀錄</div>';
+  }
+}
 });
 </script>
 </body>
