@@ -968,13 +968,13 @@ DATA.forEach((d, idx) => {
       <div class="card">
         <div class="time">${s.time}</div>
         <h3>${s.name}</h3>
-        <div class="photo">
+        ${(s.img && typeof s.img === 'string' && !s.img.startsWith('data:')) ? `<div class="photo">
           <img src="photos/${s.img}" alt="${s.name}" onload="this.style.display='block'; this.classList.add('loaded')" onerror="this.style.display='none'">
           <div class="ph-fallback">
             <svg><use href="#i-camera" xlink:href="#i-camera"></use></svg>
             <span>photos/${s.img}</span>
           </div>
-        </div>
+        </div>` : ''}
         <p>${s.desc}</p>
         ${s.tags ? `<div class="tags">${s.tags.map(t=>`<span class="tag">${t}</span>`).join('')}</div>` : ''}
         <div class="card-foot">
