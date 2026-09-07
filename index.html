@@ -547,13 +547,22 @@ div:empty:has(+ .desc) {
 /* ============ 封面（首頁） ============ */
 #cover {
   min-height: 100vh;
-  padding: 40px 20px 60px;
+  min-height: 100dvh;
+  padding: 20px;
   display: flex;
   align-items: center;
   justify-content: center;
   background: var(--paper, #f5efe4);
   position: relative;
   overflow: hidden;
+  box-sizing: border-box;
+}
+/* intro（點擊開始前）：內容置中，不撐到滿版 */
+#cover:not(.revealed) {
+  min-height: 100dvh;
+}
+#cover:not(.revealed) .cover-inner {
+  padding: 40px 0;
 }
 #cover::before {
   content: '';
@@ -579,18 +588,25 @@ div:empty:has(+ .desc) {
 #cover .cover-countdown,
 #cover .cover-menu {
   opacity: 0;
+  max-height: 0;
+  margin-top: 0;
+  margin-bottom: 0;
+  overflow: hidden;
   transform: translateY(24px);
   pointer-events: none;
-  transition: opacity 0.7s ease, transform 0.7s ease;
+  transition: opacity 0.7s ease, transform 0.7s ease, max-height 0.7s ease, margin 0.7s ease;
 }
 #cover.revealed .cover-countdown {
   opacity: 1;
+  max-height: 40px;
+  margin: 0 0 40px;
   transform: translateY(0);
   pointer-events: auto;
   transition-delay: 0.5s;
 }
 #cover.revealed .cover-menu {
   opacity: 1;
+  max-height: 2000px;
   transform: translateY(0);
   pointer-events: auto;
   transition-delay: 0.75s;
