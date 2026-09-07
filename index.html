@@ -563,9 +563,66 @@ div:empty:has(+ .desc) {
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
-  opacity: 0.35;
+  opacity: 0;
   pointer-events: none;
   mix-blend-mode: multiply;
+  transition: opacity 1.2s ease;
+}
+#cover.revealed::before { opacity: 0.35; }
+#cover .cover-title {
+  transition: font-size 0.7s ease, margin 0.7s ease;
+}
+#cover:not(.revealed) .cover-title {
+  font-size: clamp(44px, 11vw, 68px);
+  margin: 0 0 24px;
+}
+#cover .cover-countdown,
+#cover .cover-menu {
+  opacity: 0;
+  transform: translateY(24px);
+  pointer-events: none;
+  transition: opacity 0.7s ease, transform 0.7s ease;
+}
+#cover.revealed .cover-countdown {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+  transition-delay: 0.5s;
+}
+#cover.revealed .cover-menu {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+  transition-delay: 0.75s;
+}
+.cover-start-btn {
+  display: inline-block;
+  margin-top: 48px;
+  padding: 12px 32px;
+  background: transparent;
+  border: 1px solid #c47a3d;
+  border-radius: 24px;
+  color: #c47a3d;
+  font-size: 13px;
+  cursor: pointer;
+  font-family: inherit;
+  letter-spacing: 0.3em;
+  transition: all 0.3s ease;
+}
+.cover-start-btn:hover {
+  background: #c47a3d;
+  color: #fff;
+}
+#cover.revealed .cover-start-btn {
+  opacity: 0;
+  transform: translateY(-10px);
+  pointer-events: none;
+  height: 0;
+  padding: 0;
+  margin: 0;
+  border: 0;
+  overflow: hidden;
+  transition: all 0.4s ease;
 }
 .cover-inner {
   max-width: 500px;
@@ -884,6 +941,7 @@ div:empty:has(+ .desc) {
     <div class="cover-stamp-row"><span></span><span></span><span></span></div>
     <h1 class="cover-title">大阪<span class="accent">・</span>京都<br>五天四夜</h1>
     <p class="cover-date">2026.09.11 — 09.15</p>
+    <button class="cover-start-btn" onclick="document.getElementById('cover').classList.add('revealed')">點擊開始 →</button>
     <p class="cover-countdown" id="cover-countdown"></p>
     <div class="cover-menu" id="cover-menu"></div>
   </div>
