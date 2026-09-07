@@ -593,6 +593,17 @@ div:empty:has(+ .desc) {
   margin: 0 0 40px;
   letter-spacing: 0.1em;
 }
+.cover-illustration {
+  display: block;
+  width: 78%;
+  max-width: 320px;
+  margin: -8px auto 12px;
+  aspect-ratio: auto !important;
+  height: auto !important;
+  object-fit: contain !important;
+  border-radius: 0 !important;
+  mix-blend-mode: multiply;
+}
 .cover-menu {
   display: flex;
   flex-direction: column;
@@ -744,6 +755,7 @@ div:empty:has(+ .desc) {
     <div class="cover-stamp-row"><span></span><span></span><span></span></div>
     <h1 class="cover-title">大阪<span class="accent">・</span>京都<br>五天四夜</h1>
     <p class="cover-date">2026.09.11 — 09.15</p>
+    <img src="photos/cover.jpg" alt="" class="cover-illustration">
     <p class="cover-countdown" id="cover-countdown"></p>
     <div class="cover-menu" id="cover-menu"></div>
   </div>
@@ -969,7 +981,7 @@ const DATA = [
     ]
   },
  {
-    day: "Day 2",
+    day: 2,
     date: "9/12 (週六)",
     title: "古都京都巡禮・世界遺產與竹林漫步",
     note: "本日搭乘專車遊覽京都名勝，時間依現場人潮與路況彈性調整，晚餐安排梅田和牛燒肉吃到飽！",
