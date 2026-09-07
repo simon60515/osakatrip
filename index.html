@@ -1854,6 +1854,165 @@ if (document.readyState === 'loading') {
 } else {
   bindTabAndInit();
 }
+      <script>
+const EXP_DAYS = ["D1", "D2", "D3", "D4", "D5", "其他"];
+const GAS_URL = "https://script.google.com/macros/s/AKfycbxYjoCILRKwa2AFSyPM3YlVDoDBBIc4Uyr0lbag4I9j0V3bUjjz4PTyK4qjUc06JJD5wQ/exec";
+
+// 1. 初始化頁面結構（只產生一次輸入框，輸入中絕不被重繪干擾）
+function initExpenseContainers() {
+  const container = document.getElementById("daily-expense-containers");
+  if (!container || container.dataset.initialized === "true") return;
+
+  let html = "";
+  EXP_DAYS.forEach(day => {
+    html += `
+      <div style="background:#fff; border:1px solid #e5dbcf; border-radius:10px; padding:12px; margin-bottom:12px; box-shadow:0 1px 3px rgba(0,0,0,0.03); position:relative; z-index:10;">
+        <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:2px solid #ecdccb; padding-bottom:6px; margin-bottom:8px;">
+          <span style="font-weight:bold; font-size:15px; color:#523e32;">📅 ${day}</span>
+          <span id="day-total-${day}" style="font-weight:bold; font-size:13px; color:#a3704c;">
+            當日小計：¥0
+          </span>
+        </div>
+        
+        <!-- 輸入區塊（固定不動） -->
+        <div style="display:flex; gap:6px; margin-bottom:8px;">
+          <input type="text" id="exp-name-${day}" placeholder="品項（例：拉麵）" style="flex:1.2; padding:8px; border:1px solid #ccc; border-radius:6px; font-size:14px; background:#fff; -webkit-user-select:text; user-select:text;">
+          <input type="number" id="exp-amt-${day}" placeholder="日幣 ¥" style="flex:1; padding:8px; border:1px solid #ccc; border-radius:6px; font-size:14px; background:#fff; -webkit-user-select:text; user-select:text;">
+          <button type="button" onclick="window.addDayExp('${day}')" style="background:#8c6547; color:#fff; border:none; border-radius:6px; padding:8px 12px; font-size:13px; font-weight:bold; cursor:pointer;">記下</button>
+        </div>
+
+        <!-- 該天明細清單容器 -->
+        <div id="exp-list-${day}" style="max-height:160px; overflow-y:auto;">
+          <div style="color:#aaa; font-size:12px; text-align:center; padding:4px 0;">載入中...</div>
+        </div>
+      </div>
+    `;
+  });
+
+  container.innerHTML = html;
+  container.dataset.initialized = "true";
+}
+
+// 2. 從 Google Sheets 讀取資料
+async function fetchSheetExpenses() {
+  try {
+    const res = await fetch(GAS_URL);
+    const list = await res.json();
+    localStorage.setItem("trip_cached_expenses", JSON.stringify(list));
+    return list;
+  } catch (err) {
+    return JSON.parse(localStorage.getItem("trip_cached_expenses") || "[]");
+  }
+}
+
+// 3. 只更新清單與小計（不碰輸入框）
+window.renderExpenseDataOnly = async function() {
+  initExpenseContainers();
+
+  const grandTotalEl = document.getElementById("trip-grand-total");
+  const list = await fetchSheetExpenses();
+  const rateEl = document.getElementById("fx-rate");
+  const rate = parseFloat(rateEl ? rateEl.value : 0.21) || 0.21;
+
+  let grandTotal = 0;
+  const dayGroups = {};
+  EXP_DAYS.forEach(d => { dayGroups[d] = []; });
+
+  list.forEach(item => {
+    grandTotal += Number(item.amount);
+    if (dayGroups[item.day]) dayGroups[item.day].push(item);
+    else dayGroups["其他"].push(item);
+  });
+
+  if (grandTotalEl) {
+    grandTotalEl.innerHTML = `整趟總花費：¥${grandTotal.toLocaleString()} <span style="font-size:13px; color:#786455;">(約 NT$ ${Math.round(grandTotal * rate).toLocaleString()})</span>`;
+  }
+
+  EXP_DAYS.forEach(day => {
+    const items = dayGroups[day] || [];
+    const dayTotal = items.reduce((sum, i) => sum + Number(i.amount), 0);
+
+    const totalEl = document.getElementById(`day-total-${day}`);
+    if (totalEl) {
+      totalEl.innerHTML = `當日小計：¥${dayTotal.toLocaleString()} <span style="font-size:11px; color:#888;">($${Math.round(dayTotal * rate)})</span>`;
+    }
+
+    let itemsHtml = "";
+    items.forEach(item => {
+      itemsHtml += `
+        <div style="display:flex; justify-content:space-between; align-items:center; padding:6px 0; border-bottom:1px dashed #ede5db; font-size:13px;">
+          <span style="color:#333;">${item.name}</span>
+          <span>
+            ¥${Number(item.amount).toLocaleString()} 
+            <span style="font-size:11px; color:#888;">($${Math.round(item.amount * rate)})</span>
+            <button type="button" onclick="window.removeDayExp(${item.id})" style="border:none; background:none; color:#b91c1c; font-weight:bold; cursor:pointer; margin-left:6px;">✕</button>
+          </span>
+        </div>
+      `;
+    });
+
+    const listEl = document.getElementById(`exp-list-${day}`);
+    if (listEl) {
+      listEl.innerHTML = itemsHtml || '<div style="color:#aaa; font-size:12px; text-align:center; padding:4px 0;">尚無花費記錄</div>';
+    }
+  });
+};
+
+// 4. 新增資料
+window.addDayExp = async function(dayKey) {
+  const nameInput = document.getElementById(`exp-name-${dayKey}`);
+  const amtInput = document.getElementById(`exp-amt-${dayKey}`);
+  const name = nameInput ? nameInput.value.trim() : "";
+  const amount = Number(amtInput ? amtInput.value : 0);
+
+  if (!name) { alert("請輸入品項名稱！"); return; }
+  if (!amount || amount <= 0) { alert("請輸入大於 0 的日幣金額！"); return; }
+
+  const newRecord = { action: "add", id: Date.now(), day: dayKey, name, amount };
+
+  nameInput.value = "";
+  amtInput.value = "";
+
+  let localList = JSON.parse(localStorage.getItem("trip_cached_expenses") || "[]");
+  localList.unshift(newRecord);
+  localStorage.setItem("trip_cached_expenses", JSON.stringify(localList));
+  window.renderExpenseDataOnly();
+
+  fetch(GAS_URL, {
+    method: "POST",
+    mode: "no-cors",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(newRecord)
+  });
+};
+
+// 5. 刪除資料
+window.removeDayExp = async function(id) {
+  let localList = JSON.parse(localStorage.getItem("trip_cached_expenses") || "[]");
+  localList = localList.filter(item => item.id != id);
+  localStorage.setItem("trip_cached_expenses", JSON.stringify(localList));
+  window.renderExpenseDataOnly();
+
+  fetch(GAS_URL, {
+    method: "POST",
+    mode: "no-cors",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ action: "delete", id: id })
+  });
+};
+
+// 6. 監聽分頁切換
+document.addEventListener("DOMContentLoaded", () => {
+  document.querySelectorAll(".tab").forEach(tab => {
+    tab.addEventListener("click", () => {
+      if (tab.innerText.includes("記帳")) {
+        setTimeout(window.renderExpenseDataOnly, 50);
+      }
+    });
+  });
+  setTimeout(window.renderExpenseDataOnly, 300);
+});
+</script>
 </script>
 </body>
 </html>
