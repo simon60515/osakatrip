@@ -31,20 +31,26 @@
   border-radius: 8px;
   cursor: zoom-out;
 }
-  /* 只要檔名是折價券或門票，就完整顯示原圖，不裁切條碼 */
-
-  height: auto !important;
-  max-height: none !important;
-  object-fit: contain !important;
-  display: block !important;
-}
-
+  /* 折價券 / USJ 門票：頁面顯示縮圖(置中、完整不裁切)，點擊可放大原圖 */
 .photo:has(img[src*="coupon"]),
 .photo:has(img[src*="usj"]),
 .photo:has(img[src*="qr"]) {
   height: auto !important;
   max-height: none !important;
   background-color: #fff !important;
+  max-width: 320px;
+  margin: 0 auto 12px;
+}
+.photo img[src*="coupon"],
+.photo img[src*="usj"],
+.photo img[src*="qr"] {
+  position: static !important;
+  width: 100% !important;
+  height: auto !important;
+  max-height: none !important;
+  object-fit: contain !important;
+  display: block !important;
+  cursor: zoom-in;
 }
   .chk-group {
   display: flex !important;
