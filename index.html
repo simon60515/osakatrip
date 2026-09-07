@@ -1153,9 +1153,8 @@ const DATA = [
   },
   {
     day: 1,
-    date: "9/11 (五)",
+    date: "9/11（五）",
     title: "梅田商圈採買・中崎町悠閒漫步",
-    day:1, date:"9/11（五）", title:"梅田商圈採買・中崎町悠閒漫步",
     note:"前一天晚上先買好隔天早餐",
     stops:[
       {time:"上午/中午", icon:"hotel", name:"入住阪急大阪龍仕柏飯店（ホテル阪急レスパイア大阪）", desc:"Hotel Hankyu RESPIRE OSAKA，抵達後先辦理入住。<br><br>⚠️ 飯店大廳位於商場高樓層，需從地面搭乘專用直達電梯，注意別在商場內部迷路。", img:"day1-hotel-checkin.jpg", mapUrl:"https://maps.app.goo.gl/cAL8gPk8rCdEpN7g6"},
@@ -1168,7 +1167,7 @@ const DATA = [
   },
  {
     day: 2,
-    date: "9/12 (週六)",
+    date: "9/12（六）",
     title: "古都京都巡禮・世界遺產與竹林漫步",
     note: "本日搭乘專車遊覽京都名勝，時間依現場人潮與路況彈性調整，晚餐安排梅田和牛燒肉吃到飽！",
     stops: [
@@ -1345,14 +1344,14 @@ function buildCover(){
   if (!menu) return;
   menu.innerHTML = DATA.map(d => {
     const dayStr = String(d.day).replace(/^Day\s*/i, '');
-    const heading = (dayStr === '買' || dayStr === '券' || dayStr === '0')
-      ? (d.title || d.date)
-      : `${d.date}｜${d.title || ''}`.replace(/｜$/, '');
-    const tag = dayStr === '買' ? '採買' : (dayStr === '券' ? '票券' : (dayStr === '0' ? '出發前' : `Day ${dayStr}`));
+    const tag = dayStr === '買' ? '採買' : (dayStr === '券' ? '票券' : (dayStr === '0' ? '出發前' : d.date));
+    const desc = (dayStr === '買' || dayStr === '券' || dayStr === '0')
+      ? (d.title || '')
+      : (d.title || '');
     return `<button class="cover-card" data-day="${dayStr}" onclick="gotoDay('${dayStr}')">
       <span class="cover-card-label">
         <span class="cover-card-day">${tag}</span>
-        <span class="cover-card-desc">${heading}</span>
+        <span class="cover-card-desc">${desc}</span>
       </span>
       <span class="cover-card-arrow">→</span>
     </button>`;
