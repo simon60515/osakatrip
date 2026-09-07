@@ -1345,12 +1345,14 @@ function buildCover(){
   if (!menu) return;
   menu.innerHTML = DATA.map(d => {
     const dayStr = String(d.day).replace(/^Day\s*/i, '');
-    const label = dayStr === '券' ? '免稅折價券・預約憑證' : (dayStr === '0' ? '出發前核對' : (d.title || d.date));
-    const dayText = `Day ${dayStr}`;
+    const heading = (dayStr === '買' || dayStr === '券' || dayStr === '0')
+      ? (d.title || d.date)
+      : `${d.date}｜${d.title || ''}`.replace(/｜$/, '');
+    const tag = dayStr === '買' ? '採買' : (dayStr === '券' ? '票券' : (dayStr === '0' ? '出發前' : `Day ${dayStr}`));
     return `<button class="cover-card" data-day="${dayStr}" onclick="gotoDay('${dayStr}')">
       <span class="cover-card-label">
-        <span class="cover-card-day">${dayText}</span>
-        <span class="cover-card-desc">${label}</span>
+        <span class="cover-card-day">${tag}</span>
+        <span class="cover-card-desc">${heading}</span>
       </span>
       <span class="cover-card-arrow">→</span>
     </button>`;
