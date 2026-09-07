@@ -1497,6 +1497,29 @@ buildCover();
       <span>（1 日幣 = ? 台幣）</span>
     </div>
     <p class="fx-hint">匯率可自行調整，會記住你設的數字</p>
+    <!-- 👇 記帳功能區塊 -->
+      <div style="margin-top: 15px; border-top: 1px dashed #e2d9cc; padding-top: 12px;">
+        <div style="font-size: 13px; font-weight: bold; color: #5a4a42; margin-bottom: 8px;">💰 隨手記一筆</div>
+        <div style="display: flex; gap: 6px; margin-bottom: 8px;">
+          <select id="quick-exp-day" style="padding: 6px; border: 1px solid #ddd; border-radius: 6px; font-size: 13px; background: #fff;">
+            <option value="D1">D1</option>
+            <option value="D2">D2</option>
+            <option value="D3">D3</option>
+            <option value="D4">D4</option>
+            <option value="D5">D5</option>
+            <option value="其他">其他</option>
+          </select>
+          <input type="text" id="quick-exp-name" placeholder="項目（如：超商）" style="flex: 1; padding: 6px 8px; border: 1px solid #ddd; border-radius: 6px; font-size: 13px;">
+          <button onclick="addQuickExpense()" style="background: #a3704c; color: #fff; border: none; border-radius: 6px; padding: 6px 12px; font-size: 13px; font-weight: bold; cursor: pointer;">記下</button>
+        </div>
+
+        <div style="display: flex; justify-content: space-between; font-size: 12px; color: #7a6a58; margin-bottom: 6px; font-weight: bold;">
+          <span id="quick-exp-total">總計：¥0 (NT$ 0)</span>
+        </div>
+
+        <!-- 歷史花費清單 -->
+        <div id="quick-exp-list" style="max-height: 120px; overflow-y: auto; font-size: 12px; color: #444; border-top: 1px solid #f0eae1; padding-top: 4px;"></div>
+      </div>
   </div>
 </div>
 <script>
@@ -1514,6 +1537,64 @@ function fxFromTwd(){
   const rate = +document.getElementById('fx-rate').value || 0.21;
   document.getElementById('fx-jpy').value = twd ? Math.round(twd / rate) : '';
 }
+  // 快速記帳邏輯
+function addQuickExpense() {
+  const day = document.getElementById("quick-exp-day").value;
+  const name = document.getElementById("quick-exp-name").value.trim();
+  // 自動抓取日幣輸入格數值
+  const jpyInput = document.querySelector("input[placeholder*='1000']") || document.getElementById("quick-exp-amount");
+  const amount = Number(jpyInput ? jpyInput.value : 0);
+
+  if (!name || !amount || amount <= 0) {
+    alert("請先在上方輸入日幣金額，並填寫項目名稱！");
+    return;
+  }
+
+  const list = JSON.parse(localStorage.getItem("trip_quick_expenses") || "[]");
+  list.push({ day, name, amount });
+  localStorage.setItem("trip_quick_expenses", JSON.stringify(list));
+
+  document.getElementById("quick-exp-name").value = "";
+  renderQuickExpenses();
+}
+
+function renderQuickExpenses() {
+  const list = JSON.parse(localStorage.getItem("trip_quick_expenses") || "[]");
+  const rateInput = document.querySelector("input[value*='0.2']") || { value: 0.21 };
+  const rate = parseFloat(rateInput.value) || 0.21;
+
+  let totalJPY = 0;
+  let html = "";
+
+  list.forEach((item, index) => {
+    totalJPY += item.amount;
+    html += `
+      <div style="display: flex; justify-content: space-between; align-items: center; padding: 4px 0; border-bottom: 1px solid #f7f4ee;">
+        <span><b style="background:#eee; padding:1px 4px; border-radius:3px; font-size:10px;">${item.day}</b> ${item.name}</span>
+        <span>
+          ¥${item.amount.toLocaleString()} 
+          <span style="color:#888; font-size:11px;">($${Math.round(item.amount * rate)})</span>
+          <button onclick="deleteQuickExpense(${index})" style="border:none; background:none; color:#c0392b; cursor:pointer; font-weight:bold; margin-left:4px;">✕</button>
+        </span>
+      </div>
+    `;
+  });
+
+  const listEl = document.getElementById("quick-exp-list");
+  const totalEl = document.getElementById("quick-exp-total");
+  if (listEl) listEl.innerHTML = html || '<div style="color:#aaa; text-align:center; padding:6px;">尚無記帳紀錄</div>';
+  if (totalEl) totalEl.innerText = `總計：¥${totalJPY.toLocaleString()} (約 NT$ ${Math.round(totalJPY * rate).toLocaleString()})`;
+}
+
+function deleteQuickExpense(index) {
+  const list = JSON.parse(localStorage.getItem("trip_quick_expenses") || "[]");
+  list.splice(index, 1);
+  localStorage.setItem("trip_quick_expenses", JSON.stringify(list));
+  renderQuickExpenses();
+}
+
+// 頁面載入時初始化清單
+renderQuickExpenses();
 </script>
 
 <script>
