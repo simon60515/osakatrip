@@ -1470,6 +1470,99 @@ buildCover();
   const saved = localStorage.getItem('fxRate');
   if (saved) document.getElementById('fx-rate').value = saved;
 })();
+  // 快速記帳功能
+function addQuickExpense() {
+  const day = document.getElementById("quick-exp-day").value;
+  const nameEl = document.getElementById("quick-exp-name");
+  const name = nameEl ? nameEl.value.trim() : "";
+  
+  // 準確抓取第 1431 行的日幣輸入框數值
+  const jpyInput = document.getElementById("fx-jpy");
+  const amount = Number(jpyInput ? jpyInput.value : 0);
+
+  if (!amount || amount <= 0) {
+    alert("請先在上方『日幣 ¥』欄位輸入金額！");
+    return;
+  }
+  if (!name) {
+    alert("請輸入品項名稱（例如：超商、拉麵）！");
+    return;
+  }
+
+  const list = JSON.parse(localStorage.getItem("trip_quick_expenses") || "[]");
+  list.push({ day, name, amount });
+  localStorage.setItem("trip_quick_expenses", JSON.stringify(list));
+
+  nameEl.value = "";
+  renderQuickExpenses();
+}
+
+// 每日小計與歷史清單
+function renderQuickExpenses() {
+  const list = JSON.parse(localStorage.getItem("trip_quick_expenses") || "[]");
+  const rateInput = document.getElementById("fx-rate");
+  const rate = parseFloat(rateInput ? rateInput.value : 0.21) || 0.21;
+
+  let totalJPY = 0;
+  const dayTotals = {};
+
+  list.forEach(item => {
+    const amt = Number(item.amount) || 0;
+    totalJPY += amt;
+    dayTotals[item.day] = (dayTotals[item.day] || 0) + amt;
+  });
+
+  const days = ["D1", "D2", "D3", "D4", "D5", "其他"];
+  let dailyHtml = '<div style="display: flex; flex-wrap: wrap; gap: 4px; margin-top: 6px;">';
+  days.forEach(d => {
+    const dAmt = dayTotals[d] || 0;
+    if (dAmt > 0) {
+      dailyHtml += `
+        <span style="background: #f1f5f9; border: 1px solid #e2e8f0; border-radius: 4px; padding: 2px 6px; font-size: 11px; color: #475569;">
+          <b>${d}:</b> ¥${dAmt.toLocaleString()} ($${Math.round(dAmt * rate)})
+        </span>
+      `;
+    }
+  });
+  dailyHtml += '</div>';
+
+  let listHtml = "";
+  list.forEach((item, index) => {
+    listHtml += `
+      <div style="display: flex; justify-content: space-between; align-items: center; padding: 5px 0; border-bottom: 1px solid #f7f4ee;">
+        <span><b style="background:#eee; padding:1px 4px; border-radius:3px; font-size:10px;">${item.day}</b> ${item.name}</span>
+        <span>
+          ¥${Number(item.amount).toLocaleString()} 
+          <span style="color:#888; font-size:11px;">($${Math.round(item.amount * rate)})</span>
+          <button onclick="deleteQuickExpense(${index})" style="border:none; background:none; color:#c0392b; cursor:pointer; font-weight:bold; margin-left:4px;">✕</button>
+        </span>
+      </div>
+    `;
+  });
+
+  const listEl = document.getElementById("quick-exp-list");
+  const totalEl = document.getElementById("quick-exp-total");
+  
+  if (totalEl) {
+    totalEl.innerHTML = `
+      <div>總計：¥${totalJPY.toLocaleString()} <span style="font-size: 11px; color: #64748b;">(約 NT$ ${Math.round(totalJPY * rate).toLocaleString()})</span></div>
+      ${dailyHtml}
+    `;
+  }
+  if (listEl) {
+    listEl.innerHTML = listHtml || '<div style="color:#aaa; text-align:center; padding:6px;">尚無記帳紀錄</div>';
+  }
+}
+
+function deleteQuickExpense(index) {
+  const list = JSON.parse(localStorage.getItem("trip_quick_expenses") || "[]");
+  list.splice(index, 1);
+  localStorage.setItem("trip_quick_expenses", JSON.stringify(list));
+  renderQuickExpenses();
+}
+
+// 網頁載入時立刻渲染歷史清單
+renderQuickExpenses();
 function fxFromJpy(){
   const jpy = +document.getElementById('fx-jpy').value || 0;
   const rate = +document.getElementById('fx-rate').value || 0.21;
