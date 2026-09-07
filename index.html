@@ -1838,10 +1838,22 @@ window.renderSplitExpenses = async function() {
   container.innerHTML = cardsHtml;
 };
 
-// 切換至記帳頁面時自動同步雲端並繪製
-document.addEventListener("click", function() {
-  setTimeout(window.renderSplitExpenses, 120);
-});
+// 只有在切換到記帳分頁、或第一次開啟時才讀取繪製，不會干擾打字輸入
+function bindTabAndInit() {
+  const tabs = document.querySelectorAll('.tab, [data-day]');
+  tabs.forEach(t => {
+    t.addEventListener('click', () => {
+      setTimeout(window.renderSplitExpenses, 100);
+    });
+  });
+  window.renderSplitExpenses();
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', bindTabAndInit);
+} else {
+  bindTabAndInit();
+}
 </script>
 </body>
 </html>
