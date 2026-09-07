@@ -552,11 +552,27 @@ div:empty:has(+ .desc) {
   align-items: center;
   justify-content: center;
   background: var(--paper, #f5efe4);
+  position: relative;
+  overflow: hidden;
+}
+#cover::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: url('photos/cover.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  opacity: 0.35;
+  pointer-events: none;
+  mix-blend-mode: multiply;
 }
 .cover-inner {
   max-width: 500px;
   width: 100%;
   text-align: center;
+  position: relative;
+  z-index: 1;
 }
 .cover-stamp-row {
   display: flex;
@@ -657,6 +673,119 @@ div:empty:has(+ .desc) {
 .cover-card[data-day="4"] { border-left: 4px solid var(--d4, #9578a0); }
 .cover-card[data-day="5"] { border-left: 4px solid var(--d5, #b06b6b); }
 
+/* 匯率計算機 */
+.fx-btn {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 9998;
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  border: none;
+  background: #c47a3d;
+  color: #fff;
+  font-size: 22px;
+  font-family: 'Shippori Mincho', serif;
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(196,122,61,0.4);
+  transition: transform 0.15s;
+}
+.fx-btn:hover { transform: scale(1.05); }
+.fx-modal {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 99998;
+  background: rgba(0,0,0,0.55);
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+.fx-modal.open { display: flex; }
+.fx-inner {
+  background: #fdfaf3;
+  border-radius: 16px;
+  padding: 24px 20px;
+  width: 100%;
+  max-width: 340px;
+  position: relative;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+}
+.fx-close {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 32px;
+  height: 32px;
+  border: none;
+  background: transparent;
+  font-size: 22px;
+  color: #7a6957;
+  cursor: pointer;
+  line-height: 1;
+}
+.fx-title {
+  font-family: 'Shippori Mincho', serif;
+  font-size: 20px;
+  font-weight: 700;
+  color: #3d3125;
+  margin: 0 0 20px;
+  text-align: center;
+}
+.fx-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+.fx-row label {
+  font-size: 13px;
+  color: #7a6957;
+  width: 68px;
+  flex-shrink: 0;
+}
+.fx-row input {
+  flex: 1;
+  padding: 10px 12px;
+  border: 1px solid rgba(155,130,100,0.3);
+  border-radius: 8px;
+  background: #fff;
+  font-size: 16px;
+  font-family: inherit;
+  color: #3d3125;
+  min-width: 0;
+}
+.fx-row input:focus {
+  outline: none;
+  border-color: #c47a3d;
+}
+.fx-rate {
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px dashed rgba(155,130,100,0.3);
+  font-size: 12px;
+  color: #7a6957;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.fx-rate input {
+  width: 80px;
+  padding: 6px 8px;
+  border: 1px solid rgba(155,130,100,0.3);
+  border-radius: 6px;
+  background: #fff;
+  font-size: 13px;
+  font-family: inherit;
+}
+.fx-hint {
+  font-size: 11px;
+  color: #a89380;
+  margin-top: 8px;
+  text-align: center;
+}
+
 /* 返回封面按鈕 */
 .btn-home {
   position: fixed;
@@ -755,7 +884,6 @@ div:empty:has(+ .desc) {
     <div class="cover-stamp-row"><span></span><span></span><span></span></div>
     <h1 class="cover-title">大阪<span class="accent">・</span>京都<br>五天四夜</h1>
     <p class="cover-date">2026.09.11 — 09.15</p>
-    <img src="photos/cover.jpg" alt="" class="cover-illustration">
     <p class="cover-countdown" id="cover-countdown"></p>
     <div class="cover-menu" id="cover-menu"></div>
   </div>
@@ -1202,6 +1330,45 @@ buildCover();
   <button class="img-modal-close" onclick="event.stopPropagation(); document.getElementById('fullImgModal').style.display='none'" aria-label="關閉">×</button>
   <img id="fullImgTarget" src="" alt="原圖檢視">
 </div>
+
+<!-- 匯率計算機 -->
+<button class="fx-btn" onclick="document.getElementById('fxModal').classList.add('open')" aria-label="匯率計算">¥</button>
+<div class="fx-modal" id="fxModal" onclick="if(event.target===this) this.classList.remove('open')">
+  <div class="fx-inner">
+    <button class="fx-close" onclick="document.getElementById('fxModal').classList.remove('open')" aria-label="關閉">×</button>
+    <h3 class="fx-title">日幣 ⇄ 台幣</h3>
+    <div class="fx-row">
+      <label>日幣 ¥</label>
+      <input id="fx-jpy" type="number" inputmode="decimal" placeholder="1000" oninput="fxFromJpy()">
+    </div>
+    <div class="fx-row">
+      <label>台幣 NT$</label>
+      <input id="fx-twd" type="number" inputmode="decimal" placeholder="210" oninput="fxFromTwd()">
+    </div>
+    <div class="fx-rate">
+      <span>匯率</span>
+      <input id="fx-rate" type="number" step="0.001" value="0.21" oninput="fxFromJpy(); localStorage.setItem('fxRate', this.value)">
+      <span>（1 日幣 = ? 台幣）</span>
+    </div>
+    <p class="fx-hint">匯率可自行調整，會記住你設的數字</p>
+  </div>
+</div>
+<script>
+(function(){
+  const saved = localStorage.getItem('fxRate');
+  if (saved) document.getElementById('fx-rate').value = saved;
+})();
+function fxFromJpy(){
+  const jpy = +document.getElementById('fx-jpy').value || 0;
+  const rate = +document.getElementById('fx-rate').value || 0.21;
+  document.getElementById('fx-twd').value = jpy ? (jpy * rate).toFixed(1) : '';
+}
+function fxFromTwd(){
+  const twd = +document.getElementById('fx-twd').value || 0;
+  const rate = +document.getElementById('fx-rate').value || 0.21;
+  document.getElementById('fx-jpy').value = twd ? Math.round(twd / rate) : '';
+}
+</script>
 
 <script>
 // 點擊優惠券圖片時，開啟全螢幕原圖
