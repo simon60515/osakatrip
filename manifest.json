@@ -1,0 +1,16 @@
+{
+  "name": "大阪・京都 五天四夜",
+  "short_name": "大阪京都",
+  "description": "2026.09.11-15 行程與神社全攻略",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#f5efe4",
+  "theme_color": "#c47a3d",
+  "orientation": "portrait",
+  "icons": [
+    { "src": "app-icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "app-icon-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "app-icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}
