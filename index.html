@@ -1674,19 +1674,19 @@ function initExpenseContainers() {
   let html = "";
   EXP_DAYS.forEach(day => {
     html += `
-      <div style="background:#fff; border:1px solid #e5dbcf; border-radius:10px; padding:12px; margin-bottom:12px; box-shadow:0 1px 3px rgba(0,0,0,0.03); position:relative; z-index:10;">
-        <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:2px solid #ecdccb; padding-bottom:6px; margin-bottom:8px;">
-          <span style="font-weight:bold; font-size:15px; color:#523e32;">📅 ${day}</span>
-          <span id="day-total-${day}" style="font-weight:bold; font-size:13px; color:#a3704c;">
+      <div style="background:#fff; border:1px solid #e5dbcf; border-radius:8px; padding:10px 10px 8px; margin-bottom:8px; box-shadow:0 1px 3px rgba(0,0,0,0.03); position:relative; z-index:10;">
+        <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #ecdccb; padding-bottom:4px; margin-bottom:6px;">
+          <span style="font-weight:600; font-size:13px; color:#523e32;">📅 ${day}</span>
+          <span id="day-total-${day}" style="font-weight:600; font-size:12px; color:#a3704c;">
             當日小計：¥0
           </span>
         </div>
-        
+
         <!-- 輸入區塊（固定不動） -->
-        <div style="display:flex; gap:6px; margin-bottom:8px;">
-          <input type="text" id="exp-name-${day}" placeholder="品項（例：拉麵）" style="flex:1.2; padding:8px; border:1px solid #ccc; border-radius:6px; font-size:14px; background:#fff; -webkit-user-select:text; user-select:text;">
-          <input type="number" id="exp-amt-${day}" placeholder="日幣 ¥" style="flex:1; padding:8px; border:1px solid #ccc; border-radius:6px; font-size:14px; background:#fff; -webkit-user-select:text; user-select:text;">
-          <button type="button" onclick="window.addDayExp('${day}')" style="background:#8c6547; color:#fff; border:none; border-radius:6px; padding:8px 12px; font-size:13px; font-weight:bold; cursor:pointer;">記下</button>
+        <div style="display:flex; gap:5px; margin-bottom:6px;">
+          <input type="text" id="exp-name-${day}" placeholder="品項" style="flex:1.4; min-width:0; padding:5px 8px; border:1px solid #ddd; border-radius:5px; font-size:16px; height:32px; box-sizing:border-box; background:#fff;">
+          <input type="number" inputmode="numeric" id="exp-amt-${day}" placeholder="¥" style="flex:1; min-width:0; padding:5px 8px; border:1px solid #ddd; border-radius:5px; font-size:16px; height:32px; box-sizing:border-box; background:#fff;">
+          <button type="button" onclick="window.addDayExp('${day}')" style="background:#8c6547; color:#fff; border:none; border-radius:5px; padding:0 12px; height:32px; font-size:13px; font-weight:600; cursor:pointer; flex-shrink:0;">記下</button>
         </div>
 
         <!-- 該天明細清單容器 -->
