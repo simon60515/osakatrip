@@ -1587,7 +1587,7 @@ window.drawExpenseUI = function() {
 
 // 監聽點擊切換到「記帳」頁籤時自動繪製（只在點記帳 tab/卡片時觸發，避免點輸入框被重繪）
 document.addEventListener("click", function(e) {
-  if (e.target.closest('[data-day="記帳"]')) {
+  if (e.target.closest('.tab[data-day="記帳"], .cover-card[data-day="記帳"]')) {
     setTimeout(window.drawExpenseUI, 100);
   }
 });
@@ -1706,7 +1706,7 @@ window.renderSplitExpenses = function() {
 
 // 點擊頂部切換至「記帳」頁籤時自動載入繪製（只在點記帳 tab/卡片時觸發，避免點輸入框被重繪）
 document.addEventListener("click", function(e) {
-  if (e.target.closest('[data-day="記帳"]')) {
+  if (e.target.closest('.tab[data-day="記帳"], .cover-card[data-day="記帳"]')) {
     setTimeout(window.renderSplitExpenses, 120);
   }
 });
