@@ -1585,9 +1585,11 @@ window.drawExpenseUI = function() {
   if (listEl) listEl.innerHTML = listHtml || '<div style="color:#999; text-align:center; padding:8px;">目前還沒有記帳紀錄</div>';
 };
 
-// 監聽點擊切換到「記帳」頁籤時自動繪製
-document.addEventListener("click", function() {
-  setTimeout(window.drawExpenseUI, 100);
+// 監聽點擊切換到「記帳」頁籤時自動繪製（只在點記帳 tab/卡片時觸發，避免點輸入框被重繪）
+document.addEventListener("click", function(e) {
+  if (e.target.closest('[data-day="記帳"]')) {
+    setTimeout(window.drawExpenseUI, 100);
+  }
 });
 </script>
     <script>
@@ -1702,9 +1704,11 @@ window.renderSplitExpenses = function() {
   container.innerHTML = cardsHtml;
 };
 
-// 點擊頂部切換至「記帳」頁籤時自動載入繪製
-document.addEventListener("click", function() {
-  setTimeout(window.renderSplitExpenses, 120);
+// 點擊頂部切換至「記帳」頁籤時自動載入繪製（只在點記帳 tab/卡片時觸發，避免點輸入框被重繪）
+document.addEventListener("click", function(e) {
+  if (e.target.closest('[data-day="記帳"]')) {
+    setTimeout(window.renderSplitExpenses, 120);
+  }
 });
 </script>
     <script>
