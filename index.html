@@ -548,38 +548,37 @@ img {
   object-fit: cover !important;   /* 滿版裁切不變形 */
   display: block !important;
 }
-  /* 記帳頁面壓縮版面（跟其他天分開，讓輸入格緊湊） */
-.day[data-day="記帳"] .card {
-  padding: 10px 12px !important;
-}
+  /* 記帳頁徹底簡化 — 拿掉外層 card / icon / timeline 線，內容貼齊邊緣 */
 .day[data-day="記帳"] .stop {
-  grid-template-columns: 40px 1fr !important;
-  gap: 10px !important;
+  display: block !important;
+  padding: 0 !important;
+  margin: 0 !important;
 }
+.day[data-day="記帳"] .stop::before,
 .day[data-day="記帳"] .icon-wrap {
-  width: 40px !important;
-  height: 40px !important;
-  flex: 0 0 40px !important;
+  display: none !important;
 }
-.day[data-day="記帳"] .icon-wrap svg {
-  width: 18px !important;
-  height: 18px !important;
+.day[data-day="記帳"] .card {
+  padding: 0 !important;
+  border: none !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  border-radius: 0 !important;
 }
-.day[data-day="記帳"] .card h3 {
-  font-size: 15px !important;
-  margin: 0 0 8px !important;
+.day[data-day="記帳"] .card > .time,
+.day[data-day="記帳"] .card > h3 {
+  display: none !important;
 }
-.day[data-day="記帳"] .card .time {
-  font-size: 11px !important;
-  margin-bottom: 2px !important;
-}
-.day[data-day="記帳"] .card p {
-  font-size: 13px !important;
+.day[data-day="記帳"] .day-head {
+  margin-bottom: 4px !important;
 }
 .day[data-day="記帳"] .note {
-  padding: 8px 10px !important;
+  padding: 8px 12px !important;
   font-size: 12px !important;
-  margin: 8px 0 !important;
+  margin: 4px 0 12px !important;
+}
+.day[data-day="記帳"] .timeline {
+  padding: 0 !important;
 }
 
   /* 隱藏未設定圖片的灰色占位框 */
