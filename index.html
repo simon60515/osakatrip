@@ -375,6 +375,29 @@ a[href=""], a[href="#"] {
     margin:4px 0 0;
     font-weight:700;
   }
+  /* 每天專屬色系（kicker、彩色橫條、活動 tab 都吃這個） */
+  .day[data-day="1"] .day-head .kicker{color:var(--d1);}
+  .day[data-day="2"] .day-head .kicker{color:var(--d2);}
+  .day[data-day="3"] .day-head .kicker{color:var(--d3);}
+  .day[data-day="4"] .day-head .kicker{color:var(--d4);}
+  .day[data-day="5"] .day-head .kicker{color:var(--d5);}
+  .day[data-day="1"] .day-head::before,
+  .day[data-day="2"] .day-head::before,
+  .day[data-day="3"] .day-head::before,
+  .day[data-day="4"] .day-head::before,
+  .day[data-day="5"] .day-head::before {
+    content: '';
+    display: block;
+    width: 44px;
+    height: 3px;
+    border-radius: 2px;
+    margin-bottom: 10px;
+  }
+  .day[data-day="1"] .day-head::before{background:var(--d1);}
+  .day[data-day="2"] .day-head::before{background:var(--d2);}
+  .day[data-day="3"] .day-head::before{background:var(--d3);}
+  .day[data-day="4"] .day-head::before{background:var(--d4);}
+  .day[data-day="5"] .day-head::before{background:var(--d5);}
   .day[data-day="1"] .day-head h2{color:var(--d1);}
   .day[data-day="2"] .day-head h2{color:var(--d2);}
   .day[data-day="3"] .day-head h2{color:var(--d3);}
@@ -898,6 +921,17 @@ div:empty:has(+ .desc) {
   font-weight: 700;
   font-size: 15px;
   color: #3d3125;
+}
+.cover-card-weather {
+  display: inline-block;
+  margin-left: 8px;
+  padding: 2px 8px;
+  background: rgba(196,122,61,0.1);
+  color: #8b5a2b;
+  border-radius: 10px;
+  font-size: 11px;
+  font-weight: 500;
+  vertical-align: 1px;
 }
 .cover-card-desc {
   color: #7a6957;
@@ -1545,18 +1579,86 @@ function selectDay(day){
 }
 
 /* ============ 封面 + 頁面切換 ============ */
-function buildCover(){
+// 天氣代號 → emoji + 描述
+const WMO_ICON = {
+  0: '☀️', 1: '🌤', 2: '⛅', 3: '☁️',
+  45: '🌫', 48: '🌫',
+  51: '🌦', 53: '🌦', 55: '🌦',
+  61: '🌧', 63: '🌧', 65: '🌧',
+  71: '🌨', 73: '🌨', 75: '🌨',
+  80: '🌦', 81: '🌧', 82: '⛈',
+  95: '⛈', 96: '⛈', 99: '⛈'
+};
+async function getWeather() {
+  const cacheKey = 'trip_weather_v1';
+  const cached = JSON.parse(localStorage.getItem(cacheKey) || 'null');
+  const now = Date.now();
+  if (cached && cached.ts && (now - cached.ts < 6*60*60*1000)) return cached.data;
+  try {
+    // 大阪主要，京都相近
+    const res = await fetch('https://api.open-meteo.com/v1/forecast?latitude=34.69&longitude=135.5&daily=temperature_2m_max,temperature_2m_min,weather_code&timezone=Asia/Tokyo&start_date=2026-09-11&end_date=2026-09-15');
+    const j = await res.json();
+    const data = {};
+    (j.daily.time || []).forEach((t, i) => {
+      data[t] = {
+        max: Math.round(j.daily.temperature_2m_max[i]),
+        min: Math.round(j.daily.temperature_2m_min[i]),
+        icon: WMO_ICON[j.daily.weather_code[i]] || '🌤'
+      };
+    });
+    localStorage.setItem(cacheKey, JSON.stringify({ ts: now, data }));
+    return data;
+  } catch (err) {
+    return cached ? cached.data : {};
+  }
+}
+
+// 自動抓最新匯率（日幣 → 台幣）
+async function autoUpdateFxRate() {
+  const cacheKey = 'trip_fx_rate_v1';
+  const cached = JSON.parse(localStorage.getItem(cacheKey) || 'null');
+  const now = Date.now();
+  const userTouched = localStorage.getItem('fxRate'); // user manually set
+  const rateEl = document.getElementById('fx-rate');
+  if (!rateEl) return;
+  // 如果 6 小時內有抓過就用快取
+  if (cached && cached.ts && (now - cached.ts < 6*60*60*1000)) {
+    if (!userTouched) rateEl.value = cached.rate;
+    return;
+  }
+  try {
+    const res = await fetch('https://open.er-api.com/v6/latest/JPY');
+    const j = await res.json();
+    const rate = j.rates?.TWD;
+    if (rate) {
+      const rounded = Math.round(rate * 1000) / 1000;
+      localStorage.setItem(cacheKey, JSON.stringify({ ts: now, rate: rounded }));
+      if (!userTouched) rateEl.value = rounded;
+    }
+  } catch (err) {}
+}
+
+function dateKey(d) {
+  // 把 d.date 例如 "9/11（五）" 轉成 "2026-09-11"
+  const m = String(d.date || '').match(/(\d+)\/(\d+)/);
+  if (!m) return null;
+  return `2026-${String(m[1]).padStart(2,'0')}-${String(m[2]).padStart(2,'0')}`;
+}
+
+async function buildCover(){
   const menu = document.getElementById('cover-menu');
   if (!menu) return;
+  const weather = await getWeather();
   menu.innerHTML = DATA.map(d => {
     const dayStr = String(d.day).replace(/^Day\s*/i, '');
     const tag = dayStr === '買' ? '採買' : (dayStr === '券' ? '票券' : (dayStr === '0' ? '出發前' : d.date));
-    const desc = (dayStr === '買' || dayStr === '券' || dayStr === '0')
-      ? (d.title || '')
-      : (d.title || '');
+    const desc = d.title || '';
+    const dk = dateKey(d);
+    const w = dk && weather[dk];
+    const weatherBadge = w ? `<span class="cover-card-weather">${w.icon} ${w.min}–${w.max}°</span>` : '';
     return `<button class="cover-card" data-day="${dayStr}" onclick="gotoDay('${dayStr}')">
       <span class="cover-card-label">
-        <span class="cover-card-day">${tag}</span>
+        <span class="cover-card-day">${tag}${weatherBadge}</span>
         <span class="cover-card-desc">${desc}</span>
       </span>
       <span class="cover-card-arrow">→</span>
@@ -1589,6 +1691,11 @@ function goHome(){
 }
 
 buildCover();
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', autoUpdateFxRate);
+} else {
+  autoUpdateFxRate();
+}
 </script>
   <!-- 全螢幕原圖彈窗 -->
 <div id="fullImgModal" class="img-modal" onclick="this.style.display='none'">
