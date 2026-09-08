@@ -1230,12 +1230,11 @@ const DATA = [
       },
       {
         time: "梅田・阪急茶屋町",
-        name: "👕 買衣服、寬褲、小背心、鞋子",
-        desc: "<label><input type='checkbox'> Uniqlo</label><br>" +
-          "<label><input type='checkbox'> Adidas 三線寬褲</label><br>" +
-          "<label><input type='checkbox'> 大阪難波丸井百貨：Clear、AENA、Luck Back、Coca</label><br>" +
-          "<label><input type='checkbox'> Freak's store 美式選物店</label><br>"+
-          "<label><input type='checkbox'> Wego</label><br>"
+        name: "👕 UNIQLO OSAKA（全關西最大旗艦店）",
+        desc: "<label><input type='checkbox'> 日本限定聯名 UT</label><br>" +
+          "<label><input type='checkbox'> 寬版工裝褲 / 降落傘褲</label><br>" +
+          "<label><input type='checkbox'> 防風機能連帽外套</label><br>" +
+          "<label><input type='checkbox'> HEATTECH 發熱衣系列（價差大）</label>"
       },
       {
         time: "梅田・阪急百貨 B1",
@@ -1703,6 +1702,19 @@ if (document.readyState === 'loading') {
   <button class="img-modal-close" onclick="event.stopPropagation(); document.getElementById('fullImgModal').style.display='none'" aria-label="關閉">×</button>
   <img id="fullImgTarget" src="" alt="原圖檢視">
 </div>
+<script>
+// 點擊優惠券／USJ 門票的圖片，開啟全螢幕原圖
+document.addEventListener('click', function(e) {
+  if (e.target.tagName === 'IMG' && (e.target.src.includes('coupon') || e.target.src.includes('usj-ticket') || e.target.src.includes('/qr'))) {
+    const modal = document.getElementById('fullImgModal');
+    const target = document.getElementById('fullImgTarget');
+    if (modal && target) {
+      target.src = e.target.src;
+      modal.style.display = 'flex';
+    }
+  }
+});
+</script>
 
 <!-- 匯率計算機 -->
 <button class="fx-btn" onclick="document.getElementById('fxModal').classList.add('open')" aria-label="匯率計算">¥</button>
