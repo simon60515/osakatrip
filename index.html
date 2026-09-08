@@ -1554,11 +1554,11 @@ async function fetchSheetExpenses() {
 }
 
 // 3. 只更新清單與小計（不碰輸入框）
-window.renderExpenseDataOnly = async function() {
+window.renderExpenseDataOnly = async function(providedList) {
   initExpenseContainers();
 
   const grandTotalEl = document.getElementById("trip-grand-total");
-  const list = await fetchSheetExpenses();
+  const list = providedList || await fetchSheetExpenses();
   const rateEl = document.getElementById("fx-rate");
   const rate = parseFloat(rateEl ? rateEl.value : 0.21) || 0.21;
 
@@ -1624,7 +1624,7 @@ window.addDayExp = async function(dayKey) {
   let localList = JSON.parse(localStorage.getItem("trip_cached_expenses") || "[]");
   localList.unshift(newRecord);
   localStorage.setItem("trip_cached_expenses", JSON.stringify(localList));
-  window.renderExpenseDataOnly();
+  window.renderExpenseDataOnly(localList);
 
   fetch(GAS_URL, {
     method: "POST",
@@ -1639,7 +1639,7 @@ window.removeDayExp = async function(id) {
   let localList = JSON.parse(localStorage.getItem("trip_cached_expenses") || "[]");
   localList = localList.filter(item => item.id != id);
   localStorage.setItem("trip_cached_expenses", JSON.stringify(localList));
-  window.renderExpenseDataOnly();
+  window.renderExpenseDataOnly(localList);
 
   fetch(GAS_URL, {
     method: "POST",
