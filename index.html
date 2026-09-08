@@ -548,6 +548,40 @@ img {
   object-fit: cover !important;   /* 滿版裁切不變形 */
   display: block !important;
 }
+  /* 記帳頁面壓縮版面（跟其他天分開，讓輸入格緊湊） */
+.day[data-day="記帳"] .card {
+  padding: 10px 12px !important;
+}
+.day[data-day="記帳"] .stop {
+  grid-template-columns: 40px 1fr !important;
+  gap: 10px !important;
+}
+.day[data-day="記帳"] .icon-wrap {
+  width: 40px !important;
+  height: 40px !important;
+  flex: 0 0 40px !important;
+}
+.day[data-day="記帳"] .icon-wrap svg {
+  width: 18px !important;
+  height: 18px !important;
+}
+.day[data-day="記帳"] .card h3 {
+  font-size: 15px !important;
+  margin: 0 0 8px !important;
+}
+.day[data-day="記帳"] .card .time {
+  font-size: 11px !important;
+  margin-bottom: 2px !important;
+}
+.day[data-day="記帳"] .card p {
+  font-size: 13px !important;
+}
+.day[data-day="記帳"] .note {
+  padding: 8px 10px !important;
+  font-size: 12px !important;
+  margin: 8px 0 !important;
+}
+
   /* 隱藏未設定圖片的灰色占位框 */
 .photo:not(:has(img[src])),
 .card-img:empty,
