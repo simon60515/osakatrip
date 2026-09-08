@@ -641,6 +641,121 @@ div:empty:has(+ .desc) {
   background: #c47a3d;
   color: #fff;
 }
+/* 加入主畫面連結 */
+.install-link {
+  display: inline-block;
+  margin-top: 24px;
+  font-size: 13px;
+  color: #8b7355;
+  text-decoration: none;
+  border-bottom: 1px dashed rgba(155,130,100,0.4);
+  padding-bottom: 2px;
+  letter-spacing: 0.05em;
+  opacity: 0;
+  transition: opacity 0.5s ease;
+  pointer-events: none;
+}
+#cover.revealed .install-link {
+  opacity: 1;
+  pointer-events: auto;
+  transition-delay: 1s;
+}
+.install-link:hover { color: #c47a3d; }
+/* 加入主畫面 modal */
+.install-modal {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 99998;
+  background: rgba(0,0,0,0.55);
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+.install-modal.open { display: flex; }
+.install-inner {
+  background: #fdfaf3;
+  border-radius: 16px;
+  padding: 28px 22px 24px;
+  width: 100%;
+  max-width: 380px;
+  position: relative;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+}
+.install-close {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 32px;
+  height: 32px;
+  border: none;
+  background: transparent;
+  font-size: 22px;
+  color: #7a6957;
+  cursor: pointer;
+  line-height: 1;
+}
+.install-title {
+  font-family: 'Shippori Mincho', serif;
+  font-size: 20px;
+  font-weight: 700;
+  color: #3d3125;
+  margin: 0 0 6px;
+  text-align: center;
+}
+.install-hint {
+  font-size: 12px;
+  color: #7a6957;
+  text-align: center;
+  margin: 0 0 20px;
+}
+.install-tabs {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 16px;
+  background: rgba(155,130,100,0.1);
+  padding: 4px;
+  border-radius: 10px;
+}
+.install-tab {
+  flex: 1;
+  padding: 8px 12px;
+  border: none;
+  background: transparent;
+  color: #7a6957;
+  font-size: 13px;
+  cursor: pointer;
+  border-radius: 8px;
+  font-family: inherit;
+  transition: background 0.2s;
+}
+.install-tab.active {
+  background: #fff;
+  color: #3d3125;
+  font-weight: 500;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+}
+.install-panel ol {
+  padding-left: 22px;
+  margin: 0;
+  color: #3d3125;
+  font-size: 14px;
+  line-height: 1.9;
+}
+.install-panel li b {
+  color: #c47a3d;
+  font-weight: 600;
+}
+.install-note {
+  margin-top: 16px;
+  padding: 10px 12px;
+  background: rgba(196,122,61,0.08);
+  border-radius: 8px;
+  font-size: 12px;
+  color: #7a6957;
+  line-height: 1.5;
+}
+
 #cover.revealed .cover-start-btn {
   opacity: 0;
   transform: translateY(-10px);
@@ -972,6 +1087,7 @@ div:empty:has(+ .desc) {
     <button class="cover-start-btn" onclick="document.getElementById('cover').classList.add('revealed')">點擊開始 →</button>
     <p class="cover-countdown" id="cover-countdown"></p>
     <div class="cover-menu" id="cover-menu"></div>
+    <a href="#" class="install-link" onclick="event.preventDefault(); document.getElementById('installModal').classList.add('open')">📱 加入手機主畫面</a>
   </div>
 </section>
 
@@ -1439,6 +1555,50 @@ buildCover();
 
 <!-- 匯率計算機 -->
 <button class="fx-btn" onclick="document.getElementById('fxModal').classList.add('open')" aria-label="匯率計算">¥</button>
+
+<!-- 加入主畫面說明 -->
+<div class="install-modal" id="installModal" onclick="if(event.target===this) this.classList.remove('open')">
+  <div class="install-inner">
+    <button class="install-close" onclick="document.getElementById('installModal').classList.remove('open')" aria-label="關閉">×</button>
+    <h3 class="install-title">加入手機主畫面</h3>
+    <p class="install-hint">加了之後打開就像 App，不用每次找網址</p>
+    <div class="install-tabs">
+      <button type="button" class="install-tab" onclick="switchInstallTab('ios')" data-tab="ios">iPhone / iPad</button>
+      <button type="button" class="install-tab" onclick="switchInstallTab('android')" data-tab="android">Android</button>
+    </div>
+    <div class="install-panel" data-panel="ios">
+      <ol>
+        <li>用 <b>Safari</b> 打開這個網頁（不能用 Chrome）</li>
+        <li>點下方中間的 <b>分享 ⎋</b> 按鈕</li>
+        <li>往下滑，找到 <b>「加入主畫面」</b></li>
+        <li>右上角點 <b>「新增」</b>，桌面就多一個 icon</li>
+      </ol>
+      <div class="install-note">💡 加完之後打開會全螢幕，跟真的 App 一樣</div>
+    </div>
+    <div class="install-panel" data-panel="android" hidden>
+      <ol>
+        <li>用 <b>Chrome</b> 打開這個網頁</li>
+        <li>右上角點 <b>⋮</b> 選單</li>
+        <li>選 <b>「加到主畫面」</b> 或 <b>「安裝應用程式」</b></li>
+        <li>點 <b>「新增」</b>，桌面就多一個 icon</li>
+      </ol>
+    </div>
+  </div>
+</div>
+<script>
+function switchInstallTab(t) {
+  document.querySelectorAll('.install-tab').forEach(b => b.classList.toggle('active', b.dataset.tab === t));
+  document.querySelectorAll('.install-panel').forEach(p => p.hidden = p.dataset.panel !== t);
+}
+(function autoDetectInstallTab() {
+  const isIOS = /iPhone|iPad|iPod/.test(navigator.userAgent);
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => switchInstallTab(isIOS ? 'ios' : 'android'));
+  } else {
+    switchInstallTab(isIOS ? 'ios' : 'android');
+  }
+})();
+</script>
 <div class="fx-modal" id="fxModal" onclick="if(event.target===this) this.classList.remove('open')">
   <div class="fx-inner">
     <button class="fx-close" onclick="document.getElementById('fxModal').classList.remove('open')" aria-label="關閉">×</button>
